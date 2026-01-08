@@ -1,0 +1,17 @@
+Tech Stack (Planned / Optional)
+
+(write this exactly like this so future-you understands)
+
+    Database: MongoDB
+
+    Auth (initial): Custom JWT
+
+    Auth (future): Clerk / Supabase (optional)
+
+    Video (future): Stream.io
+
+    State:
+
+        Server: TanStack Query
+
+        Client: Zustand (only if needed)

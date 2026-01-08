@@ -1,0 +1,129 @@
+✅ NEXT STEP: Define RULES (not diagrams)
+
+Schemas tell you what exists.
+Rules tell you what is allowed.
+
+
+1. Status transition rules
+
+PENDING
+  → VIEWED        (Hiring Manager)
+  → WITHDRAWN     (Applicant)
+
+VIEWED
+  → SHORTLISTED   (Hiring Manager)
+  → REJECTED      (Hiring Manager)
+
+SHORTLISTED
+  → REJECTED      (Hiring Manager)
+  → (create interview)
+                                                         
+ANY
+  → WITHDRAWN     (Applicant)                              
+
+----------------------------------------------------------------------------
+
+2. Permissions matrix (who can do what)
+
+Users
+
+    Applicant:
+
+       • Apply to job
+
+       • Withdraw application
+
+       • View own application status
+
+    Hiring Manager:
+
+       • Create/edit job
+
+       • View applicants
+
+       • Update application status
+
+Jobs
+
+    • Create → Hiring Manager
+
+    • Edit → Hiring Manager (owner only)
+
+    • Close → Hiring Manager
+
+
+Interviews
+
+   • Create → Hiring Manager
+
+   • View → Both parties
+
+   • Cancel → Hiring Manager
+
+----------------------------------------------------------------------------
+
+3. Data ownership rules (critical)
+
+Write this exact rule:
+
+    A user can only read or write data they own or are related to.
+
+    Examples:
+
+       • Applicant can only see their applications
+
+       • Hiring manager can only see applications for their jobs
+
+       • No cross-job access
+
+This becomes middleware later.
+
+----------------------------------------------------------------------------
+
+4. API surface planning (not full endpoints yet)
+
+Just list intent, not code.
+
+Auth
+
+   • register
+
+   • login
+
+Jobs
+
+   • create job
+
+   • list jobs
+
+   • close job
+
+Applications
+
+   • apply to job
+
+   • list my applications
+
+   • update status
+
+Interviews
+
+   • schedule interview
+
+   • list interviews
+
+----------------------------------------------------------------------------
+
+5. Error cases (most devs skip this)
+
+Write these now:
+
+   • Applying to closed job → ❌
+
+   • Applying twice → ❌
+
+   • Updating status without permission → ❌
+
+   • Interview for rejected application → ❌
+
+If you handle these, your app is robust.

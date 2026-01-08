@@ -1,0 +1,67 @@
+Phase 1 — MVP (Core, must-have)
+
+Goal: Prove the idea works end-to-end.
+
+    Frontend
+
+        React
+
+        TanStack Query (server state)
+
+        Axios / fetch
+
+        Role-based UI (Applicant / Hiring Manager)
+
+    Backend
+
+        Node.js + Express
+
+        MongoDB
+
+        JWT Authentication
+
+        Role-based authorization
+
+    Core Features
+
+        Job posting
+
+        Job application
+
+        Application status (Unread / Rejected / Shortlisted)
+
+        Applicant confirmation to proceed
+
+        Basic messaging or notes
+
+        Dashboard per role
+
+
+Phase 2 — Product polish
+
+Goal: Improve UX and flow.
+
+    Interview scheduling (date/time)
+
+    Read receipts (seen/unseen)
+
+    Application withdrawal
+
+    Email notifications
+
+    Better filtering/search
+
+
+Phase 3 — Real-time & scale
+
+Goal: “On steroids” part.
+
+    Video interview (Stream.io / WebRTC)
+
+    Real-time messaging
+
+    Activity logs / audit trail
+
+    Rate limiting & abuse prevention
+
+

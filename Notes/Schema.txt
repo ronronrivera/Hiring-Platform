@@ -1,0 +1,100 @@
+Database Schema:
+
+User {
+    _id
+        email
+        passwordHash
+        role: "APPLICANT" | "HIRING_MANAGER"
+
+        profile: {
+            name
+                avatar
+                bio
+
+                preferredSalary     // applicant
+                website             // portfolio / company site
+                address             // string for now
+                age
+                phoneNumber
+        }
+
+    createdAt
+        updatedAt
+}
+
+
+Job {
+  _id
+  hiringManagerId → User._id
+
+  title
+  description
+  requirements: [String]
+  salaryRange
+  employmentType
+
+  status: "OPEN" | "CLOSED"
+
+  createdAt
+  updatedAt
+}
+
+
+Application {
+  _id
+  jobId → Job._id
+  applicantId → User._id
+
+  coverLetter
+
+  status:
+    "PENDING"       // unread
+  | "VIEWED"        // read
+  | "REJECTED"
+  | "SHORTLISTED"
+  | "WITHDRAWN"
+
+  applicantConfirmed: Boolean
+
+  createdAt
+  updatedAt
+}
+
+
+Interview {
+  _id
+  applicationId → Application._id
+
+  scheduledAt
+  mode: "TEXT" | "VIDEO"
+  meetingLink   // optional
+
+  status:
+    "SCHEDULED"
+  | "COMPLETED"
+  | "CANCELLED"
+
+  createdAt
+}
+
+
+JobReport {
+  _id
+  jobId → Job._id
+  reportedBy → User._id
+
+  reason:
+    "SCAM"
+  | "SPAM"
+  | "INAPPROPRIATE"
+  | "OTHER"
+
+  description
+
+  status:
+    "OPEN"
+  | "REVIEWED"
+  | "RESOLVED"
+
+  createdAt
+}

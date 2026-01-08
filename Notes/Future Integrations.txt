@@ -1,0 +1,19 @@
+1️⃣ Non-Goals / Out of Scope (VERY IMPORTANT)
+
+This prevents feature creep.
+
+Write this explicitly:
+
+    Out of Scope (for MVP):
+
+       • Payments
+
+       • Video calls (Stream.io later)
+
+       • Resume file uploads
+
+       • Ratings / reviews
+
+       • Notifications system
+
+This keeps you focused and sane.

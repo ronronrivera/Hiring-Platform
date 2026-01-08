@@ -1,0 +1,20 @@
+Project: Transparent Hiring Platform (OnlineJobs.ph–Inspired)
+
+A full-stack job marketplace designed to fix critical inefficiencies in traditional job boards.
+
+The platform supports two roles:
+Hiring Managers and Applicants, each with a dedicated UI and workflow.
+
+Key innovations:
+
+    Application status tracking — applicants can see whether their application is unread, rejected, shortlisted, or approved
+
+    Interview pipeline — shortlisted applicants can confirm interest and proceed to structured interviews
+
+    Free applicant communication — removes paywalls that prevent fair candidate–employer interaction
+
+    Role-based dashboards with separate authorization logic
+
+Focus: authentication, authorization, state management, REST APIs, and scalable system design
+
+
