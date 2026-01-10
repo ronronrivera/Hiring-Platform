@@ -1,0 +1,44 @@
+1. Auth & User
+    POST   /auth/register
+    POST   /auth/login
+    GET    /me
+    PATCH  /me/profile
+
+Roles:
+   • candidate
+
+   • employer
+
+   • admin
+
+2. Jobs
+    POST   /jobs              (employer)
+    GET    /jobs              (candidate)
+    GET    /jobs/:id
+    PATCH  /jobs/:id          (employer)
+    DELETE /jobs/:id
+
+Job states:
+
+   • draft
+
+   • published
+
+   • paused
+
+   • closed
+
+3. Applications
+    POST   /jobs/:id/apply
+    GET    /applications?jobId=
+    PATCH  /applications/:id/status
+
+Application states:
+
+   • applied
+
+   • shortlisted
+
+   • rejected
+
+   • hired
