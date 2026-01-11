@@ -1,6 +1,7 @@
 1. Auth & User
-    POST   /auth/register
+    POST   /auth/signup
     POST   /auth/login
+    POST   /auth/logout
     GET    /me
     PATCH  /me/profile
 

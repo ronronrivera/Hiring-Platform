@@ -7,6 +7,7 @@ import { ENV } from "./lib/env.js";
 import { connectDB } from "./lib/db.js";
 
 import authRoutes from "./routes/auth.route.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -19,6 +20,7 @@ if(!ENV.CLIENT_URL){
 }
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors({
     origin: ENV.CLIENT_URL,
     credentials: true
@@ -50,4 +52,4 @@ const startServer = async () =>{
 
 startServer();
 
-//TODO: IMPLEMENT A USER AUTHENTICATION USING JWT
+//TODO: IMPLEMENTING PROFILE SETUP AND MIDDLEWARE

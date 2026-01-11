@@ -21,10 +21,10 @@ const userSchema = new mongoose.Schema({
             default: "",
         },
         avatar: {
-            type: String,
-            default: ""
+            public_id: String,
+            url: String
         },
-        prefferedSalary: {
+        preferredSalary: {
             type: String,
             default: "",
         },
@@ -36,11 +36,25 @@ const userSchema = new mongoose.Schema({
             type: String,
             default: ""
         },
-        age: {
-            type: String,
-            default: ""
+        birthDate: {
+            year: {
+                type: Number,
+                default: "",
+            },
+            month: {
+                type: Number,
+                default: "",
+            },
+            day: {
+                type: Number,
+                default: "",
+            }
         },
         mobileNumber: {
+            type: String,
+            default: "",
+        },
+        bio:{
             type: String,
             default: "",
         }
