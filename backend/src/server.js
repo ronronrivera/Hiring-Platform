@@ -2,12 +2,14 @@ import express from "express";
 import "dotenv/config"
 import cors from "cors"
 import path from "path"
+import cookieParser from "cookie-parser";
 
 import { ENV } from "./lib/env.js";
 import { connectDB } from "./lib/db.js";
 
-import authRoutes from "./routes/auth.route.js";
-import cookieParser from "cookie-parser";
+import authRoutes from "./routes/auth.routes.js";
+import jobsRoutes from "./routes/jobs.routes.js";
+
 
 const app = express();
 
@@ -27,6 +29,8 @@ app.use(cors({
 }))
 
 app.use("/api/auth", authRoutes);
+app.use("/api/jobs", jobsRoutes);
+
 
 if(!ENV.NODE_ENV){
     console.log("NODE_ENV was not defined");
@@ -52,4 +56,3 @@ const startServer = async () =>{
 
 startServer();
 
-//TODO: IMPLEMENTING PROFILE SETUP AND MIDDLEWARE

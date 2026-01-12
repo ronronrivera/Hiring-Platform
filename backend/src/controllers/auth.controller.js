@@ -4,7 +4,6 @@ import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
 import cloudinary from "../lib/cloudinary.js"
-import { AgeFromDate } from "age-calculator";
 
 export const Signup = async (req, res) =>{
     const {fullname, email, password, confirmPassword} = req.body;
@@ -123,6 +122,7 @@ export const SetupProfile = async (req, res) => {
     try {
         const userId = req.user._id;
         const {
+            role,
             bio,
             preferredSalary,
             website,
@@ -132,6 +132,15 @@ export const SetupProfile = async (req, res) => {
             year,
             mobileNumber,
         } = req.body;
+        
+
+        if(!role) res.status(400).json({message: "Role is required"});
+
+        const userRole = role.toString().toLowerCase()
+
+        if(userRole !== "employee" && userRole !== "applicant"){
+            res.status(400).json({message: "Role must be either Employee or Applicant"});
+        }
 
         // Validate birth date
         if (!month || !day || !year) {
@@ -182,6 +191,7 @@ export const SetupProfile = async (req, res) => {
 
         // Build update object
         const updateData = {
+            "profile.role": userRole,
             "profile.bio": bio,
             "profile.prefferedSalary": preferredSalary,
             "profile.website": website,

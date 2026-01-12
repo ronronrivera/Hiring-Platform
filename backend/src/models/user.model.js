@@ -11,11 +11,12 @@ const userSchema = new mongoose.Schema({
         required: true,
         minLength: 15,
     },
-    role: {
-        type: String,
-        enum: ["applicant", "employee", "admin"],
-    },
+
     profile:{
+        role: {
+            type: String,
+            enum: ["applicant", "employee", "admin"],
+        },
         name: {
             type: String,
             default: "",
