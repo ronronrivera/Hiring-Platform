@@ -32,7 +32,7 @@ const jobSchema = new mongoose.Schema({
     },
     states: {
         type: String,
-        enum: ["published", "draft", "closed"],
+        enum: ["published", "draft"],
         default: "draft"
     }
 

@@ -9,7 +9,7 @@ import { connectDB } from "./lib/db.js";
 
 import authRoutes from "./routes/auth.routes.js";
 import jobsRoutes from "./routes/jobs.routes.js";
-
+import applicationRoutes from "./routes/application.routes.js"
 
 const app = express();
 
@@ -30,7 +30,7 @@ app.use(cors({
 
 app.use("/api/auth", authRoutes);
 app.use("/api/jobs", jobsRoutes);
-
+app.use("/api/jobs", applicationRoutes);
 
 if(!ENV.NODE_ENV){
     console.log("NODE_ENV was not defined");
@@ -56,3 +56,5 @@ const startServer = async () =>{
 
 startServer();
 
+
+//TODO: IMPLEMENT A FEATURE THAT CHECKS APPLICATION STATUS TO READING IF EMPLOYEE ONLY READS THE APPLICATION, REJECTED IF EMPLOYEE CHOOSE THE REJECT OPTION (SENDING MESSAGE IS OPTIONAL), SHORTLISTED IF THE EMPLOYEE IS INTERESTED TO THE APPLICANT (MUST HAVE A MESSAGE INCLUDED WHEN EMPLOYEE CHOOSES THIS OPTION) 

@@ -80,7 +80,7 @@ export const Login = async (req, res) =>{
     }
 }
 
-export const Logout = async (req, res) => {
+export const Logout = async (_, res) => {
     try {
 
         res.clearCookie("accessToken");
@@ -97,7 +97,7 @@ export const Logout = async (req, res) => {
 export const refreshToken = async (req, res) =>{
     try{
         const refreshToken = req.cookies.refreshToken;
-        if(!refreshToken) res.status(401).json({message: "No refresh token provided"});
+        if(!refreshToken) return res.status(401).json({message: "No refresh token provided"});
 
         const decoded = jwt.verify(refreshToken, ENV.REFRESH_TOKEN_SECRET);
 
@@ -133,13 +133,22 @@ export const SetupProfile = async (req, res) => {
             mobileNumber,
         } = req.body;
         
+        const user = req.user;
+    
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
 
-        if(!role) res.status(400).json({message: "Role is required"});
+        if (user.profile?.role) {
+            return res.status(400).json({ message: "Profile already set. Role cannot be changed." });
+        }
+
+        if(!role) return res.status(400).json({message: "Role is required"});
 
         const userRole = role.toString().toLowerCase()
 
         if(userRole !== "employee" && userRole !== "applicant"){
-            res.status(400).json({message: "Role must be either Employee or Applicant"});
+            return res.status(400).json({message: "Role must be either Employee or Applicant"});
         }
 
         // Validate birth date
@@ -173,7 +182,6 @@ export const SetupProfile = async (req, res) => {
         // Handle avatar upload
         let avatarData = null;
         if (req.file) {
-            const user = await User.findById(userId); // get current avatar
             if (user.profile?.avatar?.public_id) {
                 await cloudinary.uploader.destroy(user.profile.avatar.public_id);
             }
@@ -189,11 +197,10 @@ export const SetupProfile = async (req, res) => {
             };
         }
 
-        // Build update object
         const updateData = {
             "profile.role": userRole,
             "profile.bio": bio,
-            "profile.prefferedSalary": preferredSalary,
+            "profile.preferredSalary": preferredSalary,
             "profile.website": website,
             "profile.address": address,
             "profile.mobileNumber": mobileNumber,
@@ -228,7 +235,7 @@ export const getProfile = (req, res) =>{
         res.json(req.user);
     }
     catch(error){
-        console.log("Error in getProfile controller: ". error);
+        console.log("Error in getProfile controller: ", error);
         res.status(500).json({message: "Internal Server Error"});
     }
 }
