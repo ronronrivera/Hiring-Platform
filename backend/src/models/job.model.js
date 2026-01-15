@@ -16,14 +16,26 @@ const jobSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    skills: {
+        type: [{
+            type: String,
+            lowercase: true,
+            trim: true
+        }],
+        required: true,
+        set: skills =>
+            Array.isArray(skills)
+                ? skills.map(s => s.replace(/\s+/g, " "))
+                : []
+    },
     salaryRange: {
         type: String,
-        required: true,
-    },
+    required: true,
+},
     employmentType: {
         type: String,
         enum: ["FULL_TIME", "PART_TIME", "GIG"],
-        required: true
+        required: true,
     },
     status:{
         type: String,
@@ -37,9 +49,11 @@ const jobSchema = new mongoose.Schema({
     }
 
 }, 
-{
-    timestamps: true
-});
+    {
+        timestamps: true
+    });
+
+jobSchema.index({title: "text", description: "text", skills: "text"});
 
 const Job = mongoose.model("Job", jobSchema);
 

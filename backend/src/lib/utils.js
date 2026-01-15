@@ -31,3 +31,6 @@ export const setCookies = (res, accessToken, refreshToken) =>{
         maxAge: 7 * 24 * 60 * 60 * 1000,
     })
 }
+
+export const normalizeEmploymentType = (value) =>
+  value.replace(/[\s_-]/g, "").toUpperCase();

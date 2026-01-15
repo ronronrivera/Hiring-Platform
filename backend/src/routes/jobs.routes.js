@@ -5,14 +5,11 @@ import { deleteJobById,
         getAllJobs,  
         getEmployeeJobById, 
         getJobById,  patchJobStatusById, 
-        postJob
+        postJob,
+        searchJob
         } from "../controllers/jobs.controller.js";
 
 import checkProfileSetup from "../middleware/checkProfileSetup.js";
-import { allApplications, 
-        checkExistingApplication,
-        readApplication, 
-        sendApplication } from "../controllers/application.controller.js";
 
 const router = express.Router();
 
@@ -23,19 +20,11 @@ router.get("/get-my-job/:id", protectRoute, checkProfileSetup ,getEmployeeJobByI
 
 router.get("/get-jobs", protectRoute, checkProfileSetup ,getAllJobs);
 router.get("/get-job/:id", protectRoute, checkProfileSetup ,getJobById);
-
+router.get("/search", protectRoute, checkProfileSetup, searchJob);
 
 router.delete("/delete-job/:id", protectRoute, checkProfileSetup,deleteJobById);
 
 router.patch("/patch-job/:id", protectRoute, checkProfileSetup, patchJobStatusById);
 
-/*----------------> FOR APPLICATION ROUTES <-----------------------*/
-
-router.post("/:id/apply", protectRoute, checkProfileSetup, sendApplication);
-
-router.get("/applications", protectRoute, checkProfileSetup, allApplications);
-router.get("/application/:id", protectRoute, checkProfileSetup, readApplication);
-
-router.get("/check/:id", protectRoute, checkProfileSetup, checkExistingApplication)
 
 export default router;

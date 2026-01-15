@@ -43,26 +43,46 @@ export const sendApplication = async (req, res) =>{
 
 
 export const readApplication = async (req, res) => {
-    try {
 
+    /*BOTH ROLE MUST BE ABLE TO ACESS THIS ENDPOINT*/
+
+    try {
         const applicationId = req.params.id;
         const user = req.user;
 
-        const application = await Application.findById(applicationId).populate("jobId", "title description salary"); 
+        const application = await Application.findById(applicationId)
+            .populate({
+                path: "jobId",
+                select: "title description salary employee"
+            });
 
-        if(!application) return res.status(404).json({})
-        if(user.profile?.role !== "applicant") return res.status(403).json({message: "Only applicant can read application"});
-        if(application.applicantId.toString() !== user._id.toString()) return res.status(403).json({ message: "You can only read your own application" });
-        
+        if (!application) {
+            return res.status(404).json({ message: "Application not found" });
+        }
+
+        const isApplicant =
+            application.applicantId.toString() === user._id.toString();
+
+        const isEmployee =
+            application.jobId.employee.toString() === user._id.toString();
+
+        if (!isApplicant && !isEmployee) {
+            return res.status(403).json({
+                message: "You are not authorized to view this application",
+            });
+        }
+
         res.status(200).json(application);
 
     } catch (error) {
-        console.log("Error in readApplication controller: ", error);
-        res.status(500).json({message: "Internal server error"});
+        console.log("Error in readApplication controller:", error);
+        res.status(500).json({ message: "Internal server error" });
     }
-}
+};
 
 export const allApplications = async (req, res) => {
+
+    /*ONLY APPLICANT CAN SEE ALL THE APPLICATIONS HE SEND*/
 
     try {
         const user = req.user;

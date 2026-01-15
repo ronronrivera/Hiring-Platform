@@ -1,4 +1,7 @@
 import Job from "../models/job.model.js";
+import Application from "../models/application.model.js";
+
+import { normalizeEmploymentType } from "../lib/utils.js";
 
 export const postJob = async (req, res) =>{
     try {
@@ -10,9 +13,9 @@ export const postJob = async (req, res) =>{
 
         if(!user.profile.role || user.profile.role !== "employee") return res.status(403).json({message: "Only employee can post jobs"})
 
-        const {title, description, salaryRange, employmentType, states} = req.body;
+        const {title, description, salaryRange, employmentType, skills,states} = req.body;
 
-        if(!title || !description || !salaryRange || !employmentType) return res.status(400).json({message: "All fields must be required"});
+        if(!title || !description || !salaryRange || !employmentType ||!skills) return res.status(400).json({message: "All fields must be required"});
     
 
         const allowedStates = ["draft", "published"];
@@ -31,6 +34,7 @@ export const postJob = async (req, res) =>{
             employee: req.user._id,
             title: title.trim(),
             description: description.trim(),
+            skills,
             salaryRange,
             employmentType,
             states: jobStates
@@ -65,47 +69,74 @@ export const deleteJobById = async (req, res) =>{
     }
 }
 
-export const getAllEmployeeJobs = async (req, res) =>{
-    try {
-        
-        const user = req.user;
-        const userId = req.user._id;
+export const getAllEmployeeJobs = async (req, res) => {
+  try {
+    const user = req.user;
 
-        if(!user) return res.status(404).json({message: "User not found!"});
-
-        if(user.profile?.role !== "employee") return res.status(403).json({message: "Only employees can view their job posts"});
-
-        const jobs = await Job.find({employee: userId ,states: "published", status: "OPEN"});
-
-        res.status(200).json(jobs);
-
-    } catch (error) {
-        console.log("Error in fetchAllJobs: ", error);
-        res.status(500).json({message: "Internal server error"});
+    if (user.profile?.role !== "employee") {
+      return res.status(403).json({ message: "Only employees can view their job posts" });
     }
-}
+
+    // Fetch jobs
+    const jobs = await Job.aggregate([
+      {
+        $match: {
+          employee: user._id,
+          states: "published",
+          status: "OPEN",
+        },
+      },
+      {
+        $lookup: {
+          from: "applications",
+          localField: "_id",
+          foreignField: "jobId",
+          as: "applications",
+        },
+      },
+      {
+        $addFields: {
+          applicantCount: { $size: "$applications" },
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          salary: 1,
+          status: 1,
+          states: 1,
+          applicantCount: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json(jobs);
+  } catch (error) {
+    console.log("Error in getAllEmployeeJobs:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 export const getEmployeeJobById = async (req, res) => {
-    try {
-        const jobId = req.params.id;
+  try {
+    const jobId = req.params.id;
+    const userId = req.user._id;
 
-        const job = await Job.findOne({
-            _id: jobId,
-            $or: [
-                { states: "published" },
-                { employee: req.user._id }
-            ]
-        });
+    // Only the employee who owns the job can see this
+    const job = await Job.findOne({ _id: jobId, employee: userId, states: "published" });
+    if (!job) return res.status(404).json({ message: "Job not found" });
 
-        if(!job) return res.status(404).json({message: "Job not found"});
+    // Fetch applications for this job with applicant info
+    const applications = await Application.find({ jobId: jobId })
+      .populate("applicantId", "name email") // minimal applicant info
+      .select("_id subject message contact applicantId");
 
-        res.status(200).json(job); 
-
-    } catch (error) {
-        console.log("Error in getJobById: ", error);
-        res.status(500).json({message: "Internal server error"});
-    }
-}
+    res.status(200).json({ job, applications });
+  } catch (error) {
+    console.log("Error in getEmployeeJobById:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 export const patchJobStatusById = async (req, res) => {
     try{
@@ -184,3 +215,42 @@ export const getJobById = async (req, res) => {
         res.status(500).json({message: "Internal server error"});
     }
 }
+
+export const searchJob = async (req, res) => {
+    try {
+        const rawQuery = req.query.query;
+        const rawType = req.query.employmentType;
+
+        const query =
+            typeof rawQuery === "string" ? rawQuery.trim() : "";
+
+        const employmentType =
+            typeof rawType === "string"
+                ? normalizeEmploymentType(rawType)
+                : null;
+
+        const filter = {states: "published"};
+
+        let jobs;
+
+        if (query === "") {
+            jobs = await Job.find(filter)
+                .sort({ createdAt: -1 })
+                .limit(30)
+                .exec();
+        } else {
+            jobs = await Job.find({
+                ...filter,
+                $text: { $search: query }
+            })
+                .sort({ createdAt: -1 })
+                .limit(30)
+                .exec();
+        }
+
+        res.status(200).json(jobs);
+    } catch (error) {
+        console.error("Error in searchJob controller:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
