@@ -3,7 +3,7 @@ import { axiosInstance } from "@/lib/axios";
 import { toast } from "sonner";
 
 export const useStore = create((set, get) => ({
-    isAuth: null,
+    user: null,
     loading: false,
 
 
@@ -28,16 +28,21 @@ export const useStore = create((set, get) => ({
         }
     },
 
-    login: async ({email, password}) => {
-        set({loading: true});
+
+    login: async ({ email, password }) => {
+        set({ loading: true });
         try {
-            const res = await axiosInstance.post("/auth/login", {email, password});
-            set({user: res.data, loading: false});
-            toast.success(`Welcome back ${res.data["profile.name"].split(" ")[0]}`);
+            const res = await axiosInstance.post("/auth/login", { email, password });
+            set({ user: res.data, loading: false });
+
+            // use profile name if it exists, fallback to email
+            const name = res.data?.profile?.name?.split(" ")[0] || res.data.email.split("@")[0];
+            toast.success(`Welcome back ${name}`);
         } catch (error) {
-            set({loading: false});
-            toast.error(error.response?.data?.message || "An error occured");
-            set({user: null});
+            set({ loading: false });
+            console.error("Login failed:", error.response?.data || error.message);
+            toast.error(error.response?.data?.message || "An error occurred");
+            set({ user: null });
         }
     },
 

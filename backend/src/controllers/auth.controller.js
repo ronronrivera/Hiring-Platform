@@ -71,6 +71,9 @@ export const Login = async (req, res) =>{
         res.status(201).json({
             _id: user._id,
             email: user.email,
+            profile: {
+                name: user.name
+            }
         })
 
     } catch (error) {

@@ -58,7 +58,10 @@ if(!ENV.SERVERLESS){
 
     startServer();
 
-
 }
+else {
+    await connectDB();
+}
+
 
 export default app;
