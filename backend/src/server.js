@@ -35,31 +35,30 @@ app.use("/api/jobs", applicationRoutes);
 if(!ENV.NODE_ENV){
     console.log("NODE_ENV was not defined");
 }
-if(ENV.NODE_ENV === "production"){
-    app.use(express.static(path.join(__dirname, "../frontend/dist")));
-    app.get(/.*/, (_, res) =>{
-        res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
-    });
+
+if(!ENV.VERCEL){
+    if(ENV.NODE_ENV === "production"){
+        app.use(express.static(path.join(__dirname, "../frontend/dist")));
+        app.get(/.*/, (_, res) =>{
+            res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+        });
+    }
+
+    const startServer = async () =>{
+        try{
+            await connectDB();
+            app.listen(PORT, () =>{
+                console.log("App is listening to PORT: ", PORT);
+            })
+        }
+        catch(error){
+
+        }
+    }
+
+    startServer();
+
+
 }
 
-const startServer = async () =>{
-    try{
-        await connectDB();
-        app.listen(PORT, () =>{
-            console.log("App is listening to PORT: ", PORT);
-        })
-    }
-    catch(error){
-
-    }
-}
-
-startServer();
-
-//TODO: BOTH EMPLOYEE AND APPLICANT MUST BE ABLE TO READ THE JOB AND THE APPLICATION ✅
-
-//TODO: IMPLEMENT A FEATURE THAT CHECKS APPLICATION STATUS TO READING IF EMPLOYEE ONLY READS THE APPLICATION, REJECTED IF EMPLOYEE CHOOSE THE REJECT OPTION (SENDING MESSAGE IS OPTIONAL), SHORTLISTED IF THE EMPLOYEE IS INTERESTED TO THE APPLICANT (MUST HAVE A MESSAGE INCLUDED WHEN EMPLOYEE CHOOSES THIS OPTION) 
-
-//TODO: IMPLEMENT SEARCH QUERY WHERE JOBS GET FETCH DEPENDING ON WHAT THE USER SEARCH ✅
-
-//TODO: A JOB MUST REQUIRED A SKILLS ✅
+export default app;

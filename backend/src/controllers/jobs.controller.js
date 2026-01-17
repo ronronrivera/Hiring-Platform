@@ -123,7 +123,7 @@ export const getEmployeeJobById = async (req, res) => {
     const userId = req.user._id;
 
     // Only the employee who owns the job can see this
-    const job = await Job.findOne({ _id: jobId, employee: userId, states: "published" });
+    const job = await Job.findOne({ _id: jobId, employee: userId});
     if (!job) return res.status(404).json({ message: "Job not found" });
 
     // Fetch applications for this job with applicant info

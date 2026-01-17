@@ -9,15 +9,15 @@ export const sendApplication = async (req, res) =>{
         const jobId = req.params.id;
         const user = req.user;
 
+        if(!subject || !message) return res.status(400).json({message: "All fields are required"});
+        if(user.profile?.role !== "applicant") return res.status(403).json({message: "Only applicant can apply for a job"});
+
         const job = await Job.findById(jobId);
         
         const alreadyApplied = await Application.findOne({
             applicantId: user._id,
             jobId
         });
-
-        if(!subject || !message) return res.status(400).json({message: "All fields are required"});
-        if(user.profile?.role !== "applicant") return res.status(403).json({message: "Only applicant can apply for a job"});
         if(!job) return res.status(404).json({message: "Job not found"});    
         if (alreadyApplied) return res.status(400).json({ message: "You already applied to this job" });
         
@@ -41,27 +41,25 @@ export const sendApplication = async (req, res) =>{
     }
 } 
 
-
 export const readApplication = async (req, res) => {
 
     /*BOTH ROLE MUST BE ABLE TO ACESS THIS ENDPOINT*/
-
+    /*WHEN AN EMPLOYEE OPEN THE APPLICATION,THE STATUS WILL ChANGE TO VIWED, IT'LL CHANGE IF THE EMPLOYEE EXPLICITLY CHANGES IT TO REJECTED OR SHORTLISTED WITH MESSAGE*/
     try {
         const applicationId = req.params.id;
         const user = req.user;
 
         const application = await Application.findById(applicationId)
-            .populate({
-                path: "jobId",
-                select: "title description salary employee"
-            });
+            .populate("applicantId", "name email")
+            .populate("jobId", "title employee")
+            .populate("messages.sender", "name email");
 
         if (!application) {
             return res.status(404).json({ message: "Application not found" });
         }
 
         const isApplicant =
-            application.applicantId.toString() === user._id.toString();
+            application.applicantId._id.toString() === user._id.toString();
 
         const isEmployee =
             application.jobId.employee.toString() === user._id.toString();
@@ -70,6 +68,11 @@ export const readApplication = async (req, res) => {
             return res.status(403).json({
                 message: "You are not authorized to view this application",
             });
+        }
+        
+        if(isEmployee && application.status === "PENDING"){
+            application.status = "VIEWED";
+            await application.save();
         }
 
         res.status(200).json(application);
@@ -89,9 +92,11 @@ export const allApplications = async (req, res) => {
 
         if(user.profile?.role !== "applicant") 
             return res.status(403).json({ message: "Only applicants can view their applications" });
-        
+
         const applications = await Application.find({ applicantId: user._id })
-            .populate("jobId", "title description salary"); // include job details
+            .populate("jobId", "title description salary") // include job details
+            .select("-messages");
+            
 
         res.status(200).json(applications);
 
@@ -100,6 +105,69 @@ export const allApplications = async (req, res) => {
         res.status(500).json({message: "Internal server error"});
     }
 }
+
+export const sendMessageToApplication = async (req, res) => {
+  try {
+    const user = req.user;
+    const { id: applicationId } = req.params;
+    const { message, status } = req.body;
+
+    const application = await Application.findById(applicationId)
+      .populate("jobId");
+
+    if (!application) {
+      return res.status(404).json({ message: "Application not found" });
+    }
+
+    const isEmployee =
+      application.jobId.employee.toString() === user._id.toString();
+
+    const isApplicant =
+      application.applicantId.toString() === user._id.toString();
+
+    if (!isEmployee && !isApplicant) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    //  Applicants cannot change status
+    if (status && !isEmployee) {
+      return res.status(403).json({
+        message: "Only employer can update application status",
+      });
+    }
+
+    // Employer status rules
+    if (isEmployee && status) {
+      const allowedStatus = ["REJECTED", "SHORTLISTED"];
+      if (!allowedStatus.includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+
+      if (status === "SHORTLISTED" && !message) {
+        return res.status(400).json({
+          message: "Message required when shortlisting",
+        });
+      }
+
+      application.status = status;
+    }
+
+    // Push message (both sides)
+    if (message) {
+      application.messages.push({
+        sender: user._id,
+        content: message,
+      });
+    }
+
+    await application.save();
+
+    res.json({ message: "Message sent successfully" });
+  } catch (error) {
+    console.error("sendMessageToApplication error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 export const checkExistingApplication = async (req, res) => {
     try {
@@ -122,3 +190,4 @@ export const checkExistingApplication = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     } 
 }
+
