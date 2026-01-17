@@ -2,8 +2,8 @@ import multer from "multer";
 import fs from "fs";
 import path from "path";
 
-// Ensure uploads directory exists so multer can write files and set req.file.path
-const uploadDir = path.join(process.cwd(), "uploads");
+// Use Vercel-compatible temp folder
+const uploadDir = path.join("/tmp", "uploads");
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
