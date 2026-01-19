@@ -10,6 +10,14 @@ function HomePage() {
   const [loginOpen, setLoginOpen] = useState(false)
   const [signupOpen, setSignupOpen] = useState(false)
 
+  const handleSwitchToSignup = () => {
+    setSignupOpen(true)
+  }
+
+  const handleSwitchToLogin = () => {
+    setLoginOpen(true)
+  }
+
   return (
     <div>
       <nav className="backdrop-blur-md mt-5 border-primary/20 sticky top-0 z-50">
@@ -44,8 +52,16 @@ function HomePage() {
       </nav>
 
       {/* Auth Modals */}
-      <LoginModal open={loginOpen} onOpenChange={setLoginOpen} />
-      <SignupModal open={signupOpen} onOpenChange={setSignupOpen} />
+      <LoginModal 
+        open={loginOpen} 
+        onOpenChange={setLoginOpen}
+        onSwitchToSignup={handleSwitchToSignup}
+      />
+      <SignupModal 
+        open={signupOpen} 
+        onOpenChange={setSignupOpen}
+        onSwitchToLogin={handleSwitchToLogin}
+      />
     </div>
   )
 }
