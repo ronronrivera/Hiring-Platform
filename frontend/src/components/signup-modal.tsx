@@ -82,7 +82,7 @@ export function SignupModal({
                             onChange={handleChange("confirmPassword")}
                         />
                         <Button className="w-full mt-2" onClick={handleSubmit}>
-                            {loading? ( <Loader2Icon className="size-3"/>) : (
+                            {loading? ( <Loader2Icon className="size-3 animate-spin"/>) : (
                                 "Create account"
                             )} 
                         </Button>

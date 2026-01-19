@@ -71,9 +71,7 @@ export const Login = async (req, res) =>{
         res.status(201).json({
             _id: user._id,
             email: user.email,
-            profile: {
-                name: user.name
-            }
+            profile: user.profile
         })
 
     } catch (error) {
@@ -167,11 +165,6 @@ export const SetupProfile = async (req, res) => {
         // Validate phone
         if (mobileNumber && !/^\d+$/.test(mobileNumber)) {
             return res.status(400).json({ message: "Phone number must be numeric" });
-        }
-
-        // Validate salary
-        if (preferredSalary !== undefined && isNaN(preferredSalary)) {
-            return res.status(400).json({ message: "Preferred salary must be a number" });
         }
 
         // Validate bio
