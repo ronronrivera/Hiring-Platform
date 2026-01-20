@@ -239,7 +239,7 @@ form.role === "employee" ? "border-primary bg-primary/10" : "hover:border-primar
                         </Button>
                         <Button onClick={handleNext}>
                             {step === steps.length - 1 ? "Finish" : "Next"}
-                            {step === steps.length - 1 && loading? (<Loader2Icon className="size-6 animate-spin"/>) : ("Finish")}
+                            {step === steps.length - 1 && loading? (<Loader2Icon className="size-6 animate-spin"/>) : ("")}
                         </Button>
                     </div>
                 </CardContent>

@@ -70,7 +70,7 @@ export const useStore = create((set, get) => ({
       formData.append("mobileNumber", form.mobileNumber);
 
       if (form.image) {
-        formData.append("avatar", form.image);
+        formData.append("avatars", form.image);
       }
 
       const res = await axiosInstance.post("/auth/setup-profile", formData, {
