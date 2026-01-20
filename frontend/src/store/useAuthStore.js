@@ -78,7 +78,6 @@ export const useStore = create((set, get) => ({
       });
 
       set({ profile: res.data.user, loading: false });
-      toast.success("Profile created successfully");
     } catch (error) {
       console.error("Profile setup failed:", error.response?.data || error.message);
       toast.error(error.response?.data?.message || "An error occurred");
