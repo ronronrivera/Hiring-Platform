@@ -216,7 +216,6 @@ export const SetupProfile = async (req, res) => {
         ).select("-password"); // exclude password
 
         res.status(200).json({
-            message: "Profile setup completed",
             user: updatedUser,
         });
     } catch (error) {
@@ -228,6 +227,16 @@ export const SetupProfile = async (req, res) => {
 
 export const getProfile = (req, res) =>{
     try{
+        res.json(req.user);
+    }
+    catch(error){
+        console.log("Error in getProfile controller: ", error);
+        res.status(500).json({message: "Internal Server Error"});
+    }
+}
+
+export const getMe = (req, res) =>{
+        try{
         res.json(req.user);
     }
     catch(error){

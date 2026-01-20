@@ -201,6 +201,7 @@ form.role === "employee" ? "border-primary bg-primary/10" : "hover:border-primar
                 day: form.day,
                 year: form.year,
                 mobileNumber: form.mobileNumber,
+                image: form.image
             })
             toast.success("Profile setup successfully");
             return

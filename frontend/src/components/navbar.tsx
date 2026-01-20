@@ -38,10 +38,10 @@ export function Navbar() {
               <button className="flex items-center gap-2 rounded-full hover:scale-105 transition-transform">
                 <Avatar>
                   {user.profile?.avatar ? (
-                    <AvatarImage src={user.profile.avatar} alt="Profile" />
+                    <AvatarImage src={user.profile.avatar?.url} alt="Profile" />
                   ) : (
                     <AvatarFallback>
-                      {user.profile?.name?.charAt(0) || "U"}
+                      {user.profile?.name?.charAt(-1) || "U"}
                     </AvatarFallback>
                   )}
                 </Avatar>
