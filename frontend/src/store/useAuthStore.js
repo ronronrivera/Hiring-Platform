@@ -13,7 +13,6 @@ export const useStore = create((set, get) => ({
         try {
             const res = await axiosInstance.get("/auth/profile");
             set({user: res.data, profile: res.data.profile});
-            console.log(res)
         } catch (error) {
             console.log("Error in checkAuth", error);
             set({user: null});
@@ -22,6 +21,7 @@ export const useStore = create((set, get) => ({
             set({CheckingAuth: false});
         }
     },
+
 
     signup: async ({ fullName, email, password, confirmPassword }) => {
         set({ loading: true });
@@ -45,12 +45,12 @@ export const useStore = create((set, get) => ({
         try {
             const res = await axiosInstance.post("/auth/login", { email, password });
             set({ user: res.data, loading: false });
-
+            
             await get().checkAuth();
 
             const name = res.data.profile?.name?.split(" ")[0];
             toast.success(`Welcome back ${name || res.data.email}`);
-            console.log(res);
+
         } catch (error) {
             set({ loading: false });
             console.log("Login failed: ", error.message);
@@ -70,7 +70,8 @@ export const useStore = create((set, get) => ({
 
     setupProfile: async (form) => {
         set({ loading: true });
-        try {
+        try { 
+
             const formData = new FormData();
             formData.append("role", form.role);
             formData.append("bio", form.bio);
@@ -89,10 +90,10 @@ export const useStore = create((set, get) => ({
             const res = await axiosInstance.post("/auth/setup-profile", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
-            set({ profile: res.data.user?.profile, loading: false });
+            set({user: res.data.user ,profile: res.data.user?.profile, loading: false });
             
             await get().checkAuth();
-
+    
             toast.success(`Welcome ${res.data.user?.profile?.name?.split(" ")[0]}`);
         } catch (error) {
             console.error("Profile setup failed:", error.response?.data || error.message);

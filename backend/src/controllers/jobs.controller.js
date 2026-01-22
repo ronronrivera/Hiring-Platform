@@ -82,7 +82,6 @@ export const getAllEmployeeJobs = async (req, res) => {
       {
         $match: {
           employee: user._id,
-          states: "published",
           status: "OPEN",
         },
       },
@@ -100,17 +99,19 @@ export const getAllEmployeeJobs = async (req, res) => {
         },
       },
       {
-        $project: {
-          title: 1,
-          salary: 1,
-          status: 1,
-          states: 1,
-          applicantCount: 1,
-        },
-      },
-    ]);
+                $project: {
+                    _id: 1,
+                    title: 1,
+                    salary: 1,
+                    status: 1,
+                    states: 1,
+                    applicantCount: 1,
+                    createdAt: 1,
+                },
+            },
+        ]);
 
-    res.status(200).json(jobs);
+        res.status(200).json(jobs);
   } catch (error) {
     console.log("Error in getAllEmployeeJobs:", error);
     res.status(500).json({ message: "Internal server error" });

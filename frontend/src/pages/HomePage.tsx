@@ -3,72 +3,72 @@ import { SignupModal } from "@/components/signup-modal"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Button } from "@/components/ui/button"
 import {
-  UsersRoundIcon,
-  BriefcaseIcon,
-  UserCheckIcon,
-  ZapIcon,
-  MessageSquareIcon,
-  ShieldCheckIcon,
+    UsersRoundIcon,
+    BriefcaseIcon,
+    UserCheckIcon,
+    ZapIcon,
+    MessageSquareIcon,
+    ShieldCheckIcon,
 } from "lucide-react"
 import { Link } from "react-router"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import JobPreviewCard from "@/components/JobPreviewCard"
 
 function HomePage() {
-  const [loginOpen, setLoginOpen] = useState(false)
-  const [signupOpen, setSignupOpen] = useState(false)
+    const [loginOpen, setLoginOpen] = useState(false)
+    const [signupOpen, setSignupOpen] = useState(false)
+    
+    return (
+        <div className="min-h-screen flex flex-col">
+            {/* NAVBAR */}
+            <nav className="backdrop-blur-md mt-4 border-primary/20 sticky top-0 z-50">
+                <div className="max-w-7xl mx-auto p-4 flex items-center justify-between">
+                    <Link
+                        to="/"
+                        className="flex items-center gap-3 hover:scale-105 transition-transform"
+                    >
+                        <div className="size-10 rounded-xl bg-linear-to-br from-primary via-secondary to-accent flex items-center justify-center shadow-lg">
+                            <UsersRoundIcon className="size-6" />
+                        </div>
+                        <span className="font-black text-2xl tracking-wider">
+                            Recruify
+                        </span>
+                    </Link>
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      {/* NAVBAR */}
-      <nav className="backdrop-blur-md mt-4 border-primary/20 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto p-4 flex items-center justify-between">
-          <Link
-            to="/"
-            className="flex items-center gap-3 hover:scale-105 transition-transform"
-          >
-            <div className="size-10 rounded-xl bg-linear-to-br from-primary via-secondary to-accent flex items-center justify-center shadow-lg">
-              <UsersRoundIcon className="size-6" />
-            </div>
-            <span className="font-black text-2xl tracking-wider">
-              Recruify
-            </span>
-          </Link>
+                    <div className="flex items-center gap-3">
+                        <Button onClick={() => setLoginOpen(true)}>
+                            Login
+                        </Button>
+                        <Button onClick={() => setSignupOpen(true)}>
+                            Sign up
+                        </Button>
+                        <ModeToggle />
+                    </div>
+                </div>
+            </nav>
 
-          <div className="flex items-center gap-3">
-            <Button onClick={() => setLoginOpen(true)}>
-              Login
-            </Button>
-            <Button onClick={() => setSignupOpen(true)}>
-              Sign up
-            </Button>
-            <ModeToggle />
-          </div>
-        </div>
-      </nav>
+            {/* HERO */}
+            <section className="flex-1 flex items-center">
+                <div className="max-w-7xl mx-auto px-4 py-24 grid md:grid-cols-2 gap-12 items-center">
+                    <div className="space-y-6">
+                        <h1 className="text-5xl font-black leading-tight">
+                            Hire faster. <br /> Get hired smarter.
+                        </h1>
+                        <p className="text-muted-foreground text-lg">
+                            Recruify connects skilled developers with serious companies using
+                            smart matching, real skills, and zero noise.
+                        </p>
+                        <div className="flex gap-4">
+                            <Button size="lg" onClick={() => setSignupOpen(true)}>
+                                Find Jobs
+                            </Button>
+                            <Button size="lg" variant="outline" onClick={() => setSignupOpen(true)}>
+                                Hire Talent
+                            </Button>
+                        </div>
+                    </div>
 
-      {/* HERO */}
-      <section className="flex-1 flex items-center">
-        <div className="max-w-7xl mx-auto px-4 py-24 grid md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <h1 className="text-5xl font-black leading-tight">
-              Hire faster. <br /> Get hired smarter.
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Recruify connects skilled developers with serious companies using
-              smart matching, real skills, and zero noise.
-            </p>
-            <div className="flex gap-4">
-              <Button size="lg" onClick={() => setSignupOpen(true)}>
-                Find Jobs
-              </Button>
-              <Button size="lg" variant="outline" onClick={() => setSignupOpen(true)}>
-                Hire Talent
-              </Button>
-            </div>
-          </div>
-
-          {/* Placeholder visual */}
+                    {/* Placeholder visual */}
 
                     <div className="hidden md:block">
                         <div className="rounded-2xl border bg-background shadow-sm overflow-hidden">

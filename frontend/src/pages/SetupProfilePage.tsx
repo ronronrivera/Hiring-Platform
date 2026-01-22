@@ -1,4 +1,4 @@
-import { useState } from "react"
+import {  useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -7,6 +7,7 @@ import { BriefcaseIcon, Loader2Icon, UserIcon } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "sonner"
 import { useStore } from "@/store/useAuthStore"
+import PageLoader from "@/components/PageLoader"
 
 type FormState = {
     role: string
@@ -23,6 +24,12 @@ type FormState = {
 
 export default function SetupProfile() {
     const [step, setStep] = useState(0)
+
+    const {checkAuth, CheckingAuth} = useStore();
+
+    useEffect(() => {
+        checkAuth();
+    },[checkAuth])
 
     const [form, setForm] = useState<FormState>({
         role: "",
@@ -209,42 +216,45 @@ form.role === "employee" ? "border-primary bg-primary/10" : "hover:border-primar
         setStep(step + 1)
     }
 
+
     const handleBack = () => setStep(step - 1)
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-muted/30">
-            <Card className="w-full max-w-md">
-                <CardContent className="p-6 space-y-6">
-                    <div className="space-y-1">
-                        <h2 className="text-2xl font-bold">{steps[step].title}</h2>
-                        <p className="text-sm text-muted-foreground">
-                            Step {step + 1} of {steps.length}
-                        </p>
-                    </div>
+            {CheckingAuth? (<PageLoader/>) : (
+                <Card className="w-full max-w-md">
+                    <CardContent className="p-6 space-y-6">
+                        <div className="space-y-1">
+                            <h2 className="text-2xl font-bold">{steps[step].title}</h2>
+                            <p className="text-sm text-muted-foreground">
+                                Step {step + 1} of {steps.length}
+                            </p>
+                        </div>
 
-                    <AnimatePresence>
-                        <motion.div
-                            key={step}
-                            initial={{ opacity: 0, x: 50 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -50 }}
-                            transition={{ duration: 0.3 }}
-                        >
-                            {steps[step].content}
-                        </motion.div>
-                    </AnimatePresence>
+                        <AnimatePresence>
+                            <motion.div
+                                key={step}
+                                initial={{ opacity: 0, x: 50 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -50 }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                {steps[step].content}
+                            </motion.div>
+                        </AnimatePresence>
 
-                    <div className="flex justify-between">
-                        <Button variant="ghost" disabled={step === 0} onClick={handleBack}>
-                            Back
-                        </Button>
-                        <Button onClick={handleNext}>
-                            {step === steps.length - 1 ? "Finish" : "Next"}
-                            {step === steps.length - 1 && loading? (<Loader2Icon className="size-6 animate-spin"/>) : ("")}
-                        </Button>
-                    </div>
-                </CardContent>
-            </Card>
+                        <div className="flex justify-between">
+                            <Button variant="ghost" disabled={step === 0} onClick={handleBack}>
+                                Back
+                            </Button>
+                            <Button onClick={handleNext}>
+                                {step === steps.length - 1 ? "Finish" : "Next"}
+                                {step === steps.length - 1 && loading? (<Loader2Icon className="size-6 animate-spin"/>) : ("")}
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
         </div>
     )
 }
