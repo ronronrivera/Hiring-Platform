@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { axiosInstance } from "@/lib/axios";
 
 export const jobStore = create((set, get) => ({
-    
+
     employeeJobs: [],
     currentJobs: [],
     jobs: [],    
@@ -14,11 +14,11 @@ export const jobStore = create((set, get) => ({
         set({isLoading: true});
 
         try {
-           
+
             const res = await axiosInstance.post("/jobs/post-job", jobData);
             toast.success("Job posted successfully");
             set((state) =>({
-               employeeJobs: [res.data, ...state.employeeJobs], 
+                employeeJobs: [res.data, ...state.employeeJobs], 
             }))
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to post job");
@@ -43,7 +43,7 @@ export const jobStore = create((set, get) => ({
             set({isLoading: false});
         }
     },
-    
+
     fetchEmployeeJobs: async() =>{
         set({isLoading: true});
 
@@ -58,5 +58,33 @@ export const jobStore = create((set, get) => ({
             set({isLoading: false});
         }
     },
+    fetchEmployeeJobById: async (jobId) => {
+        set({ isLoading: true });
+        try {
+            const res = await axiosInstance.get(`/jobs/get-my-job/${jobId}`);
+            set({
+                currentJob: res.data.job,
+                applications: res.data.applications,
+            });
+        } catch {
+            toast.error("Failed to load job details");
+        } finally {
+            set({ isLoading: false });
+        }
+    },
+
+    updateJobState: async (jobId, status) => {
+        set({ isLoading: true });
+        try {
+            await axiosInstance.patch(`/jobs/patch-job/${jobId}`, {status});
+            toast.success("Job status updated");
+            get().fetchEmployeeJobs();
+        } catch(error) {
+            toast.error("Failed to update job status");
+            console.error(error);
+        } finally {
+            set({ isLoading: false });
+        }
+    }, 
 
 })); 

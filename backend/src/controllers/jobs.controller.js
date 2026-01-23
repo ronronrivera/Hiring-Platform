@@ -5,29 +5,29 @@ import { normalizeEmploymentType } from "../lib/utils.js";
 
 export const postJob = async (req, res) =>{
     try {
-        
-        
+
+
         const user = req.user; 
 
         if(!user) return res.status(404).json({message: "User not found!"});
 
         if(!user.profile.role || user.profile.role !== "employee") return res.status(403).json({message: "Only employee can post jobs"})
 
-        const {title, description, salaryRange, employmentType, skills,states} = req.body;
+        const {title, description, salaryRange, employmentType, skills,status} = req.body;
 
         if(!title || !description || !salaryRange || !employmentType ||!skills) return res.status(400).json({message: "All fields must be required"});
-    
 
-        const allowedStates = ["draft", "published"];
 
-        let jobStates = "draft"; // default
+        const allowedStatus = ["draft", "published"];
 
-        if (states) {
-            const normalizedState = states.toLowerCase();
-            if (!allowedStates.includes(normalizedState)) {
+        let jobStatus = "draft"; // default
+
+        if (status) {
+            const normalizedState = status.toLowerCase();
+            if (!allowedStatus.includes(normalizedState)) {
                 return res.status(400).json({ message: "Invalid job state" });
             }
-            jobStates = normalizedState;
+            jobStatus = normalizedState;
         }
 
         const newJob = await Job.create({
@@ -37,7 +37,7 @@ export const postJob = async (req, res) =>{
             skills,
             salaryRange,
             employmentType,
-            states: jobStates
+            status: jobStatus
         });     
         res.status(201).json(newJob);
 
@@ -70,41 +70,39 @@ export const deleteJobById = async (req, res) =>{
 }
 
 export const getAllEmployeeJobs = async (req, res) => {
-  try {
-    const user = req.user;
+    try {
+        const user = req.user;
 
-    if (user.profile?.role !== "employee") {
-      return res.status(403).json({ message: "Only employees can view their job posts" });
-    }
+        if (user.profile?.role !== "employee") {
+            return res.status(403).json({ message: "Only employees can view their job posts" });
+        }
 
-    // Fetch jobs
-    const jobs = await Job.aggregate([
-      {
-        $match: {
-          employee: user._id,
-          status: "OPEN",
-        },
-      },
-      {
-        $lookup: {
-          from: "applications",
-          localField: "_id",
-          foreignField: "jobId",
-          as: "applications",
-        },
-      },
-      {
-        $addFields: {
-          applicantCount: { $size: "$applications" },
-        },
-      },
-      {
+        // Fetch jobs
+        const jobs = await Job.aggregate([
+            {
+                $match: {
+                    employee: user._id,
+                },
+            },
+            {
+                $lookup: {
+                    from: "applications",
+                    localField: "_id",
+                    foreignField: "jobId",
+                    as: "applications",
+                },
+            },
+            {
+                $addFields: {
+                    applicantCount: { $size: "$applications" },
+                },
+            },
+            {
                 $project: {
                     _id: 1,
                     title: 1,
                     salary: 1,
                     status: 1,
-                    states: 1,
                     applicantCount: 1,
                     createdAt: 1,
                 },
@@ -112,31 +110,31 @@ export const getAllEmployeeJobs = async (req, res) => {
         ]);
 
         res.status(200).json(jobs);
-  } catch (error) {
-    console.log("Error in getAllEmployeeJobs:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
+    } catch (error) {
+        console.log("Error in getAllEmployeeJobs:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 };
 
 export const getEmployeeJobById = async (req, res) => {
-  try {
-    const jobId = req.params.id;
-    const userId = req.user._id;
+    try {
+        const jobId = req.params.id;
+        const userId = req.user._id;
 
-    // Only the employee who owns the job can see this
-    const job = await Job.findOne({ _id: jobId, employee: userId});
-    if (!job) return res.status(404).json({ message: "Job not found" });
+        // Only the employee who owns the job can see this
+        const job = await Job.findOne({ _id: jobId, employee: userId});
+        if (!job) return res.status(404).json({ message: "Job not found" });
 
-    // Fetch applications for this job with applicant info
-    const applications = await Application.find({ jobId: jobId })
-      .populate("applicantId", "name email") // minimal applicant info
-      .select("_id subject message contact applicantId");
+        // Fetch applications for this job with applicant info
+        const applications = await Application.find({ jobId: jobId })
+            .populate("applicantId", "name email") 
+            .select("_id subject message contact applicantId");
 
-    res.status(200).json({ job, applications });
-  } catch (error) {
-    console.log("Error in getEmployeeJobById:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
+        res.status(200).json({ job, applications });
+    } catch (error) {
+        console.log("Error in getEmployeeJobById:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 };
 
 export const patchJobStatusById = async (req, res) => {
@@ -153,15 +151,15 @@ export const patchJobStatusById = async (req, res) => {
 
         const job = await Job.findById(jobId);
 
-        const normalizedStatus = status.toUpperCase();
-        const allowedStatuses = ["OPEN", "CLOSE"];
+        const normalizedStatus = status.toLowerCase();
+        const allowedStatus = ["published", "draft"];
 
         if(!job) return res.status(404).json({message: "Job not found"})
 
         if(user.profile?.role !== "employee") return res.status(403).json({message: "Not authorized to perform this action"});
 
 
-        if (!allowedStatuses.includes(normalizedStatus)) {
+        if (!allowedStatus.includes(normalizedStatus)) {
             return res.status(400).json({ message: "Invalid status value" });
         }
 
@@ -185,8 +183,8 @@ export const patchJobStatusById = async (req, res) => {
 
 export const getAllJobs = async (_, res) =>{
     try {
-        
-        const jobs = await Job.find({states: "published", status: "OPEN"});
+
+        const jobs = await Job.find({status: "published"});
 
         res.status(200).json(jobs);
 
@@ -203,7 +201,7 @@ export const getJobById = async (req, res) => {
         const job = await Job.findOne({
             _id: jobId,
             $or: [
-                { states: "published" },
+                { status: "published" },
             ]
         });
 
@@ -230,7 +228,7 @@ export const searchJob = async (req, res) => {
                 ? normalizeEmploymentType(rawType)
                 : null;
 
-        const filter = {states: "published"};
+        const filter = {status: "published"};
 
         let jobs;
 

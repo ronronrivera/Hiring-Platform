@@ -37,12 +37,7 @@ const jobSchema = new mongoose.Schema({
         enum: ["FULL_TIME", "PART_TIME", "GIG"],
         required: true,
     },
-    status:{
-        type: String,
-        enum: ["OPEN", "CLOSED"],
-        default: "OPEN",
-    },
-    states: {
+   status: {
         type: String,
         enum: ["published", "draft"],
         default: "draft"

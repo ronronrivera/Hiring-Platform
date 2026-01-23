@@ -19,7 +19,7 @@ import { jobStore } from "@/store/useJobStore";
 import JobSuccess from "./SuccessPostPage";
 
 type EmploymentType = "FULL_TIME" | "PART_TIME" | "GIG";
-type JobState = "draft" | "published";
+type JobStatus = "draft" | "published";
 
 interface JobForm {
     title: string;
@@ -27,7 +27,7 @@ interface JobForm {
     salaryRange: string;
     employmentType: EmploymentType;
     skills: string[];
-    states: JobState;
+    status: JobStatus;
 }
 
 const emptyForm: JobForm = {
@@ -36,7 +36,7 @@ const emptyForm: JobForm = {
     salaryRange: "",
     employmentType: "FULL_TIME",
     skills: [],
-    states: "draft",
+    status: "draft",
 };
 
 const countWords = (text: string) =>
@@ -121,7 +121,7 @@ export default function PostJobPage() {
                         {success ? (
                             //  SUCCESS STATE
                             <JobSuccess
-                                isDraft={form.states === "draft"}
+                                isDraft={form.status === "draft"}
                                 onPostAnother={handlePostAnother}
                             />
                         ) : (
@@ -251,11 +251,11 @@ export default function PostJobPage() {
                                             Status
                                         </label>
                                         <select
-                                            value={form.states}
+                                            value={form.status}
                                             onChange={e =>
                                                 setForm({
                                                     ...form,
-                                                    states: e.target.value as JobState,
+                                                    status: e.target.value as JobStatus,
                                                 })
                                             }
                                             className="w-full rounded-md border px-3 py-2 text-sm"
