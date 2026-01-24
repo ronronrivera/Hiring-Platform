@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "sonner"
 import { useStore } from "@/store/useAuthStore"
 import PageLoader from "@/components/PageLoader"
+import { useNavigate } from "react-router"
 
 type FormState = {
     role: string
@@ -23,14 +24,12 @@ type FormState = {
 }
 
 export default function SetupProfile() {
-    const [step, setStep] = useState(0)
+    const [step, setStep] = useState(0);
+    const [formInitialized, setFormInitialized] = useState(false);
 
-    const {checkAuth, CheckingAuth} = useStore();
+    const { profile, checkAuth, CheckingAuth, loading, setupProfile } = useStore();
 
-    useEffect(() => {
-        checkAuth();
-    },[checkAuth])
-
+    // Always declare form state at the top
     const [form, setForm] = useState<FormState>({
         role: "",
         bio: "",
@@ -42,7 +41,34 @@ export default function SetupProfile() {
         year: "",
         mobileNumber: "",
         image: null,
-    })
+    });
+
+    useEffect(() => {
+        const init = async () => {
+            await checkAuth();
+
+            if (profile) {
+                setForm({
+                    role: profile.role || "",
+                    bio: profile.bio || "",
+                    preferredSalary: profile.preferredSalary || "",
+                    website: profile.website || "",
+                    address: profile.address || "",
+                    month: profile.month || "",
+                    day: profile.day || "",
+                    year: profile.year || "",
+                    mobileNumber: profile.mobileNumber || "",
+                    image: null,
+                });
+            }
+
+            setFormInitialized(true); // form can now render
+        };
+        init();
+    }, [checkAuth, profile]);
+
+    // Loader until auth/profile is ready
+    if (CheckingAuth || !formInitialized) return <PageLoader />;
 
     const steps = [
         {
@@ -178,9 +204,6 @@ form.role === "employee" ? "border-primary bg-primary/10" : "hover:border-primar
     ]
 
 
-    const setupProfile = useStore((state) => state.setupProfile)
-    const {loading} = useStore();
-
     const handleNext = async () => {
         // Validation for required fields
         if (step === 0 && !form.role) {
@@ -221,40 +244,38 @@ form.role === "employee" ? "border-primary bg-primary/10" : "hover:border-primar
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-muted/30">
-            {CheckingAuth? (<PageLoader/>) : (
-                <Card className="w-full max-w-md">
-                    <CardContent className="p-6 space-y-6">
-                        <div className="space-y-1">
-                            <h2 className="text-2xl font-bold">{steps[step].title}</h2>
-                            <p className="text-sm text-muted-foreground">
-                                Step {step + 1} of {steps.length}
-                            </p>
-                        </div>
+            <Card className="w-full max-w-md">
+                <CardContent className="p-6 space-y-6">
+                    <div className="space-y-1">
+                        <h2 className="text-2xl font-bold">{steps[step].title}</h2>
+                        <p className="text-sm text-muted-foreground">
+                            Step {step + 1} of {steps.length}
+                        </p>
+                    </div>
 
-                        <AnimatePresence>
-                            <motion.div
-                                key={step}
-                                initial={{ opacity: 0, x: 50 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -50 }}
-                                transition={{ duration: 0.3 }}
-                            >
-                                {steps[step].content}
-                            </motion.div>
-                        </AnimatePresence>
+                    <AnimatePresence>
+                        <motion.div
+                            key={step}
+                            initial={{ opacity: 0, x: 50 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -50 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {steps[step].content}
+                        </motion.div>
+                    </AnimatePresence>
 
-                        <div className="flex justify-between">
-                            <Button variant="ghost" disabled={step === 0} onClick={handleBack}>
-                                Back
-                            </Button>
-                            <Button onClick={handleNext}>
-                                {step === steps.length - 1 ? "Finish" : "Next"}
-                                {step === steps.length - 1 && loading? (<Loader2Icon className="size-6 animate-spin"/>) : ("")}
-                            </Button>
-                        </div>
-                    </CardContent>
-                </Card>
-            )}
+                    <div className="flex justify-between">
+                        <Button variant="ghost" disabled={step === 0} onClick={handleBack}>
+                            Back
+                        </Button>
+                        <Button onClick={handleNext}>
+                            {step === steps.length - 1 ? "Finish" : "Next"}
+                            {step === steps.length - 1 && loading? (<Loader2Icon className="size-6 animate-spin"/>) : ("")}
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     )
 }

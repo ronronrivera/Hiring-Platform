@@ -14,7 +14,6 @@ export const useStore = create((set, get) => ({
             const res = await axiosInstance.get("/auth/profile");
             set({user: res.data, profile: res.data.profile});
         } catch (error) {
-            console.log("Error in checkAuth", error);
             set({user: null});
         }
         finally{
@@ -92,7 +91,6 @@ export const useStore = create((set, get) => ({
             });
             set({user: res.data.user ,profile: res.data.user?.profile, loading: false });
             
-            await get().checkAuth();
     
             toast.success(`Welcome ${res.data.user?.profile?.name?.split(" ")[0]}`);
         } catch (error) {

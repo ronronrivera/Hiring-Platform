@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { jobStore } from "@/store/useJobStore";
-import { CalendarDaysIcon, BriefcaseIcon, DollarSign, Loader2Icon, ArrowLeftIcon } from "lucide-react";
+import { CalendarDaysIcon, BriefcaseIcon, DollarSign, Loader2Icon, ArrowLeftIcon, Loader } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import JobDetailsSkeleton from "@/components/JobDetailsSkeleton";
 
@@ -67,9 +67,23 @@ const EmployeeJobDetailsPage = () => {
                             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                                 {currentJob.title}
                             </h1>
-                            <p className="text-sm mt-1">
-                                Status: <span className={`font-medium ml-1 ${currentJob.status === "published"? "bg-green-600" : "bg-amber-500"} rounded-md p-1`}>
-                                    {currentJob.status[0].toUpperCase() + currentJob.status.slice(1)}</span>
+
+                            <p className="text-sm mt-1 flex items-center gap-2">
+                                <span>Status:</span>
+
+                                {isLoading ? (
+                                    <Loader2Icon className="animate-spin size-4" />
+                                ) : (
+                                        <span
+                                            className={`font-medium ${
+currentJob.status === "published"
+? "bg-green-600"
+: "bg-amber-500"
+} rounded-md px-2 py-1`}
+                                        >
+                                            {currentJob.status[0].toUpperCase() + currentJob.status.slice(1)}
+                                        </span>
+                                    )}
                             </p>
                         </div>
 

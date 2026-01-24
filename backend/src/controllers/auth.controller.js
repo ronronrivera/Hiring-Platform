@@ -235,12 +235,4 @@ export const getProfile = (req, res) =>{
     }
 }
 
-export const getMe = (req, res) =>{
-        try{
-        res.json(req.user);
-    }
-    catch(error){
-        console.log("Error in getProfile controller: ", error);
-        res.status(500).json({message: "Internal Server Error"});
-    }
-}
+

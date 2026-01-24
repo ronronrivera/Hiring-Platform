@@ -59,7 +59,8 @@ export default function JobsPage() {
                                 >
                                     {/* Left */}
                                     <div className="space-y-2 mb-4 sm:mb-0">
-                                        <h2 className="text-xl font-semibold flex items-center gap-2">
+                                        <h2 className={`${job.title.length > 65? "text-md" : "text-xl"} 
+                                                font-semibold flex items-center gap-2`}>
                                             <Briefcase className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                                             {job.title}
                                         </h2>
@@ -88,8 +89,8 @@ export default function JobsPage() {
 
                                         {/*  Arrow to Job Details */}
                                         <button
-                                            onClick={() => navigate(`/job/${job._id}`)}
-                                            className="p-2 rounded-full opacity-0 group-hover:opacity-100 hover:bg-gray-200 dark:hover:bg-gray-800 transition"
+                                            onClick={() => navigate(`/ejob/${job._id}`)}
+                                            className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition"
                                             aria-label="View job details"
                                         >
                                             <ArrowRight className="w-5 h-5" />

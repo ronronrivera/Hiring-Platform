@@ -6,6 +6,9 @@ export const jobStore = create((set, get) => ({
 
     employeeJobs: [],
     currentJobs: [],
+    applications: [],
+
+    currentApplicantJobs: [],
     jobs: [],    
     isLoading: false,
 
@@ -58,6 +61,7 @@ export const jobStore = create((set, get) => ({
             set({isLoading: false});
         }
     },
+
     fetchEmployeeJobById: async (jobId) => {
         set({ isLoading: true });
         try {
@@ -66,6 +70,7 @@ export const jobStore = create((set, get) => ({
                 currentJob: res.data.job,
                 applications: res.data.applications,
             });
+            console.log(res.data);
         } catch {
             toast.error("Failed to load job details");
         } finally {
@@ -79,6 +84,7 @@ export const jobStore = create((set, get) => ({
             await axiosInstance.patch(`/jobs/patch-job/${jobId}`, {status});
             toast.success("Job status updated");
             get().fetchEmployeeJobs();
+            get().fetchEmployeeJobById(jobId);
         } catch(error) {
             toast.error("Failed to update job status");
             console.error(error);
@@ -86,5 +92,36 @@ export const jobStore = create((set, get) => ({
             set({ isLoading: false });
         }
     }, 
+    
+    getAllJobs: async () => {
+        set({isLoading: true});
+
+        try {
+            const res = await axiosInstance.get("/jobs/get-jobs");
+            set({jobs: res.data});
+
+
+        } catch (error) {
+            toast.error(error.response?.data?.message || "An Error Occured");                       
+        }
+        finally{
+            set({isLoading: false});
+        }
+    },
+    fetchJobById: async (jobId) => {
+        set({ isLoading: true });
+        try {
+            const res = await axiosInstance.get(`/jobs/get-job/${jobId}`);
+            set({
+                currentApplicantJobs: res.data,
+            });
+            console.log(res);
+        } catch {
+            toast.error("Failed to load job details");
+        } finally {
+            set({ isLoading: false });
+        }
+    },
+
 
 })); 

@@ -11,8 +11,10 @@ import {
     ShieldCheckIcon,
 } from "lucide-react"
 import { Link } from "react-router"
-import { useEffect, useState } from "react"
+import {  useState } from "react"
 import JobPreviewCard from "@/components/JobPreviewCard"
+import { motion } from "framer-motion"
+import { AnimateOnScroll } from "@/components/AnimateScroll"
 
 function HomePage() {
     const [loginOpen, setLoginOpen] = useState(false)
@@ -21,7 +23,11 @@ function HomePage() {
     return (
         <div className="min-h-screen flex flex-col">
             {/* NAVBAR */}
-            <nav className="backdrop-blur-md mt-4 border-primary/20 sticky top-0 z-50">
+            <motion.nav 
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="backdrop-blur-md mt-4 border-primary/20 sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto p-4 flex items-center justify-between">
                     <Link
                         to="/"
@@ -45,12 +51,16 @@ function HomePage() {
                         <ModeToggle />
                     </div>
                 </div>
-            </nav>
+            </motion.nav>
 
             {/* HERO */}
             <section className="flex-1 flex items-center">
                 <div className="max-w-7xl mx-auto px-4 py-24 grid md:grid-cols-2 gap-12 items-center">
-                    <div className="space-y-6">
+                    <motion.div 
+                        initial={{ x: -40, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                        className="space-y-6">
                         <h1 className="text-5xl font-black leading-tight">
                             Hire faster. <br /> Get hired smarter.
                         </h1>
@@ -66,11 +76,15 @@ function HomePage() {
                                 Hire Talent
                             </Button>
                         </div>
-                    </div>
+                    </motion.div>
 
                     {/* Placeholder visual */}
 
-                    <div className="hidden md:block">
+                    <motion.div 
+                        initial={{ x: 40, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                        className="hidden md:block">
                         <div className="rounded-2xl border bg-background shadow-sm overflow-hidden">
                             {/* Fake Dashboard Header */}
                             <div className="border-b px-4 py-3 flex justify-between items-center">
@@ -97,13 +111,17 @@ function HomePage() {
                                 />
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </section>
 
             {/* USER PATHS */}
             <section className="border-t bg-muted/30">
-                <div className="max-w-7xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-8">
+                <motion.div 
+                    initial={{ y: -20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.6 }}
+                    className="max-w-7xl mx-auto px-4 py-20 grid md:grid-cols-2 gap-8">
                     <div className="rounded-2xl border p-8 space-y-4">
                         <BriefcaseIcon className="size-8 text-primary" />
                         <h3 className="text-2xl font-bold">For Job Seekers</h3>
@@ -129,68 +147,74 @@ function HomePage() {
                             Post a Job
                         </Button>
                     </div>
-                </div>
+                </motion.div>
             </section>
 
             {/* HOW IT WORKS */}
-            <section>
-                <div className="max-w-7xl mx-auto px-4 py-20 text-center">
-                    <h2 className="text-4xl font-black mb-12">How it works</h2>
-                    <div className="grid md:grid-cols-3 gap-8">
-                        <div className="space-y-3">
-                            <ZapIcon className="size-8 mx-auto text-primary" />
-                            <h4 className="font-bold text-lg">Create your profile</h4>
-                            <p className="text-muted-foreground">
-                                Set up once and let matching work for you.
-                            </p>
-                        </div>
-                        <div className="space-y-3">
-                            <UsersRoundIcon className="size-8 mx-auto text-primary" />
-                            <h4 className="font-bold text-lg">Get matched</h4>
-                            <p className="text-muted-foreground">
-                                Smart filtering connects the right people.
-                            </p>
-                        </div>
-                        <div className="space-y-3">
-                            <MessageSquareIcon className="size-8 mx-auto text-primary" />
-                            <h4 className="font-bold text-lg">Chat & hire</h4>
-                            <p className="text-muted-foreground">
-                                Talk directly and move fast.
-                            </p>
+            <AnimateOnScroll>
+                <section>
+                    <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+                        <h2 className="text-4xl font-black mb-12">How it works</h2>
+                        <div className="grid md:grid-cols-3 gap-8">
+                            <div className="space-y-3">
+                                <ZapIcon className="size-8 mx-auto text-primary" />
+                                <h4 className="font-bold text-lg">Create your profile</h4>
+                                <p className="text-muted-foreground">
+                                    Set up once and let matching work for you.
+                                </p>
+                            </div>
+                            <div className="space-y-3">
+                                <UsersRoundIcon className="size-8 mx-auto text-primary" />
+                                <h4 className="font-bold text-lg">Get matched</h4>
+                                <p className="text-muted-foreground">
+                                    Smart filtering connects the right people.
+                                </p>
+                            </div>
+                            <div className="space-y-3">
+                                <MessageSquareIcon className="size-8 mx-auto text-primary" />
+                                <h4 className="font-bold text-lg">Chat & hire</h4>
+                                <p className="text-muted-foreground">
+                                    Talk directly and move fast.
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </AnimateOnScroll>
 
             {/* FEATURES */}
-            <section className="border-t bg-muted/30">
-                <div className="max-w-7xl mx-auto px-4 py-20">
-                    <h2 className="text-4xl font-black text-center mb-12">
-                        Built for serious hiring
-                    </h2>
-                    <div className="grid md:grid-cols-4 gap-6">
-                        <Feature icon={<ZapIcon />} title="Smart Matching" />
-                        <Feature icon={<MessageSquareIcon />} title="Real-time Chat" />
-                        <Feature icon={<ShieldCheckIcon />} title="Secure Auth" />
-                        <Feature icon={<UsersRoundIcon />} title="Application Tracking" />
+            <AnimateOnScroll>
+                <section className="border-t bg-muted/30">
+                    <div className="max-w-7xl mx-auto px-4 py-20">
+                        <h2 className="text-4xl font-black text-center mb-12">
+                            Built for serious hiring
+                        </h2>
+                        <div className="grid md:grid-cols-4 gap-6">
+                            <Feature icon={<ZapIcon />} title="Smart Matching" />
+                            <Feature icon={<MessageSquareIcon />} title="Real-time Chat" />
+                            <Feature icon={<ShieldCheckIcon />} title="Secure Auth" />
+                            <Feature icon={<UsersRoundIcon />} title="Application Tracking" />
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </AnimateOnScroll>
 
             {/* FINAL CTA */}
-            <section>
-                <div className="max-w-7xl mx-auto px-4 py-24 text-center space-y-6">
-                    <h2 className="text-4xl font-black">
-                        Ready to stop wasting time?
-                    </h2>
-                    <p className="text-muted-foreground">
-                        Join Recruify and experience focused hiring.
-                    </p>
-                    <Button size="lg" onClick={() => setSignupOpen(true)}>
-                        Get Started
-                    </Button>
-                </div>
-            </section>
+            <AnimateOnScroll>
+                <section>
+                    <div className="max-w-7xl mx-auto px-4 py-24 text-center space-y-6">
+                        <h2 className="text-4xl font-black">
+                            Ready to stop wasting time?
+                        </h2>
+                        <p className="text-muted-foreground">
+                            Join Recruify and experience focused hiring.
+                        </p>
+                        <Button size="lg" onClick={() => setSignupOpen(true)}>
+                            Get Started
+                        </Button>
+                    </div>
+                </section>
+            </AnimateOnScroll>
 
             {/* FOOTER */}
             <footer className="border-t">
