@@ -1,23 +1,42 @@
 import { useEffect } from "react";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { jobStore } from "@/store/useJobStore";
 import { toast } from "sonner";
-import { BriefcaseIcon, UserIcon, DollarSignIcon, TagIcon } from "lucide-react";
+import {
+    BriefcaseIcon,
+    UserIcon,
+    DollarSignIcon,
+    TagIcon,
+    ArrowLeftIcon,
+    ClockIcon,
+} from "lucide-react";
+import { Navbar } from "@/components/navbar";
+import { JobDetailsSkeleton } from "./jobDetailsSkeleton";
 
 const JobDetails = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const { currentApplicantJobs, fetchJobById, isLoading } = jobStore();
 
     useEffect(() => {
         if (id) fetchJobById(id);
     }, [id]);
 
-    if (isLoading) {
+    const job = currentApplicantJobs;
+
+    const formatDate = (date?: string) => {
+        if (!date) return "—";
+        return new Date(date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+        });
+    };
+
+    if (isLoading || !job) {
         return (
-            <div className="p-6 text-center text-gray-500">
-                Loading job details...
-            </div>
-        );
+            <JobDetailsSkeleton/>
+       );
     }
 
     const handleApply = () => {
@@ -25,59 +44,116 @@ const JobDetails = () => {
     };
 
     const handleReport = () => {
-        toast("Job reported. Thank you for your feedback.", { variant: "warning" });
+        toast("Job reported. Thank you for your feedback.");
     };
 
-    const job = currentApplicantJobs; // alias for clarity
-
     return (
-        <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow-md space-y-6">
-            <h1 className="text-2xl font-bold">{job.title}</h1>
-            <p className="text-gray-700">{job.description}</p>
+        <div className="min-h-screen text-black dark:text-white bg-white dark:bg-black">
+            <Navbar />
 
-            <div className="flex items-center gap-2">
-                <TagIcon className="w-5 h-5 text-gray-500" />
-                <h2 className="font-semibold">Skills Required:</h2>
-            </div>
-            <ul className="list-disc list-inside ml-6">
-                {job.skills?.map((skill, idx) => (
-                    <li key={idx} className="capitalize">{skill}</li>
-                ))}
-            </ul>
-
-            <div className="flex items-center gap-2">
-                <DollarSignIcon className="w-5 h-5 text-gray-500" />
-                <h2 className="font-semibold">Salary Range:</h2>
-            </div>
-            <p>{job.salaryRange}</p>
-
-            <div className="flex items-center gap-2">
-                <BriefcaseIcon className="w-5 h-5 text-gray-500" />
-                <h2 className="font-semibold">Employment Type:</h2>
-            </div>
-            <p>{job.employmentType?.replace("_", " ").toLowerCase()}</p>
-
-            <div className="flex items-center gap-2">
-                <UserIcon className="w-5 h-5 text-gray-500" />
-                <h2 className="font-semibold">Posted By:</h2>
-            </div>
-            <p>{job.employee?.name || "Unknown"}</p>
-
-            <div className="flex gap-4 mt-4">
+            <div className="max-w-4xl mx-auto px-4 pt-8 pb-20">
+                {/* Back */}
                 <button
-                    onClick={handleApply}
-                    className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition flex items-center gap-2"
+                    onClick={() => navigate(-1)}
+                    className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition mb-6"
                 >
-                    <BriefcaseIcon className="w-4 h-4" />
-                    Apply
+                    <ArrowLeftIcon className="w-5 h-5" />
+                    <span className="text-sm font-medium">Back</span>
                 </button>
-                <button
-                    onClick={handleReport}
-                    className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition flex items-center gap-2"
-                >
-                    <UserIcon className="w-4 h-4" />
-                    Report
-                </button>
+
+                {/* Actions */}
+                <div className="flex justify-center gap-3 mb-10">
+                    <button
+                        onClick={handleApply}
+                        className="px-5 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-2"
+                    >
+                        <BriefcaseIcon className="w-4 h-4" />
+                        Apply
+                    </button>
+
+                    <button
+                        onClick={handleReport}
+                        className="px-5 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition flex items-center gap-2"
+                    >
+                        <UserIcon className="w-4 h-4" />
+                        Report
+                    </button>
+                </div>
+
+                {/* Job Card */}
+                <div className="max-w-3xl mx-auto p-8 rounded-2xl shadow-md space-y-8">
+                    {/* Title */}
+                    <div>
+                        <h1 className="text-3xl font-bold mb-2">
+                            {job.title}
+                        </h1>
+
+                        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-4">
+                            <ClockIcon className="w-4 h-4" />
+                            <span>Posted {formatDate(job.createdAt)}</span>
+                        </div>
+
+                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                            {job.description}
+                        </p>
+                    </div>
+
+                    <hr className="border-neutral-800" />
+
+                    {/* Meta */}
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-3">
+                            <DollarSignIcon className="w-5 h-5 text-gray-500" />
+                            <span className="font-semibold w-36">
+                                Salary Range
+                            </span>
+                            <span>{job.salaryRange}</span>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <BriefcaseIcon className="w-5 h-5 text-gray-500" />
+                            <span className="font-semibold w-36">
+                                Employment
+                            </span>
+                            <span>
+                                {job.employmentType?.replace("_", " ")}
+                            </span>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <UserIcon className="w-5 h-5 text-gray-500" />
+                            <span className="font-semibold w-36">
+                                Posted by
+                            </span>
+                            <span>
+                                {job.employee?.profile?.name || "Unknown"}
+                            </span>
+                        </div>
+                    </div>
+
+                    <hr className="border-neutral-800" />
+
+                    {/* Skills */}
+                    <div>
+                        <div className="flex items-center gap-2 mb-4">
+                            <TagIcon className="w-5 h-5 text-gray-500" />
+                            <h2 className="font-semibold text-lg">
+                                Skills Required
+                            </h2>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                            {job.skills?.map((skill: string, idx: number) => (
+                                <span
+                                    key={idx}
+                                    className="px-3 py-1 text-sm rounded-full bg-gray-100 dark:bg-neutral-900 border border-gray-300 dark:border-neutral-700 capitalize"
+                                >
+                                    {skill}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

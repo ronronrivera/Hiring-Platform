@@ -184,7 +184,8 @@ export const patchJobStatusById = async (req, res) => {
 export const getAllJobs = async (_, res) =>{
     try {
 
-        const jobs = await Job.find({status: "published"});
+        const jobs = await Job.find({status: "published"}).populate({  path: "employee",
+  select: "profile.name profile.avatar profile.role"});
 
         res.status(200).json(jobs);
 
@@ -203,7 +204,7 @@ export const getJobById = async (req, res) => {
             $or: [
                 { status: "published" },
             ]
-        });
+        }).populate("employee", "profile");
 
         if(!job) return res.status(404).json({message: "Job not found"});
 

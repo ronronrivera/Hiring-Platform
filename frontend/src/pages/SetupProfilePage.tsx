@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "sonner"
 import { useStore } from "@/store/useAuthStore"
 import PageLoader from "@/components/PageLoader"
-import { useNavigate } from "react-router"
 
 type FormState = {
     role: string

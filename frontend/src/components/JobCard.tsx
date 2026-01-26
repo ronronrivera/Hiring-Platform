@@ -1,25 +1,31 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DollarSignIcon } from "lucide-react";
+import { DollarSignIcon, ClockIcon } from "lucide-react";
 import { useNavigate } from "react-router";
 
 export function JobCard({ job }) {
     const navigate = useNavigate();
 
+    const formatDate = (date?: string) => {
+        if (!date) return "—";
+        return new Date(date).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+        });
+    };
+
     return (
         <Card className="hover:shadow-lg transition h-full">
             <CardContent className="flex flex-col h-full p-4">
-
-                {/* TOP CONTENT */}
+                {/* TOP */}
                 <div className="flex-1 space-y-3">
-
-                    {/* Title (clamped) */}
+                    {/* Title */}
                     <h2 className="text-lg font-semibold line-clamp-2">
                         {job.title}
                     </h2>
 
                     {/* Meta */}
-                    <div className="flex flex-wrap gap-2 text-sm text-gray-500">
+                    <div className="flex flex-wrap gap-3 text-sm text-gray-500">
                         <span className="flex items-center gap-1">
                             <DollarSignIcon className="w-4 h-4" />
                             {job.salaryRange}
@@ -28,6 +34,11 @@ export function JobCard({ job }) {
                         <span className="px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-xs">
                             {job.employmentType.replace("_", " ")}
                         </span>
+
+                        <span className="flex items-center gap-1 text-xs">
+                            <ClockIcon className="w-3.5 h-3.5" />
+                            {formatDate(job.createdAt)}
+                        </span>
                     </div>
 
                     {/* Description */}
@@ -35,7 +46,7 @@ export function JobCard({ job }) {
                         {job.description}
                     </p>
 
-                    {/* Skills (optional) */}
+                    {/* Skills */}
                     {job.skills?.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                             {job.skills.slice(0, 4).map((skill, i) => (
@@ -55,7 +66,7 @@ export function JobCard({ job }) {
                     )}
                 </div>
 
-                {/* FOOTER (always bottom) */}
+                {/* FOOTER */}
                 <div className="pt-4 mt-auto">
                     <Button
                         className="w-full"

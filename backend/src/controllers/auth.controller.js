@@ -103,11 +103,13 @@ export const refreshToken = async (req, res) =>{
         const decoded = jwt.verify(refreshToken, ENV.REFRESH_TOKEN_SECRET);
 
         const accessToken = jwt.sign({userId: decoded.userId}, ENV.ACCESS_TOKEN_SECRET, {expiresIn: "15m"});
+        
+        const isProd = ENV.NODE_ENV === "production";
 
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "none",
+            secure: isProd,
+            sameSite: isProd ? "none" : "lax",
             maxAge: 15 * 60 * 1000,
         });
 
@@ -115,7 +117,7 @@ export const refreshToken = async (req, res) =>{
     }
     catch(error){
         console.log("Error in refresh token controller", error.message);
-        res.status(500).json({message: "Error in refresh token controller", error: error.message});
+        res.status(401).json({message: "Invalid or expired refresh token"});
     }
 }
 

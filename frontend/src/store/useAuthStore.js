@@ -2,6 +2,35 @@ import { create } from "zustand";
 import { axiosInstance } from "@/lib/axios";
 import { toast } from "sonner";
 
+const setupAxiosInterceptors = (store) => {
+  axiosInstance.interceptors.response.use(
+    res => res,
+    async error => {
+      const originalRequest = error.config;
+
+      if (
+        error.response?.status === 401 &&
+        !originalRequest._retry &&
+        !originalRequest.url.includes("/auth/refresh-token")
+      ) {
+        originalRequest._retry = true;
+
+        try {
+          // Use the store's refreshToken method
+          await store.getState().refreshToken();
+          return axiosInstance(originalRequest);
+        } catch (refreshError) {
+          // Only logout if refresh truly failed
+          store.getState().logout();
+          return Promise.reject(refreshError);
+        }
+      }
+
+      return Promise.reject(error);
+    }
+  );
+};
+
 export const useStore = create((set, get) => ({
     user: null,
     loading: false,
@@ -13,8 +42,14 @@ export const useStore = create((set, get) => ({
         try {
             const res = await axiosInstance.get("/auth/profile");
             set({user: res.data, profile: res.data.profile});
+            return true; // Success
         } catch (error) {
-            set({user: null});
+            // Don't set user to null immediately on 401
+            // Let the interceptor handle token refresh
+            if (error.response?.status !== 401) {
+                set({user: null});
+            }
+            return false; // Failed
         }
         finally{
             set({CheckingAuth: false});
@@ -101,53 +136,36 @@ export const useStore = create((set, get) => ({
     },
 
     refreshToken: async () => {
-        // Prevent multiple simultaneous refresh attempts
-        if (get().CheckingAuth) return;
+        // More robust check for concurrent refresh attempts
+        if (get().refreshingToken) {
+            // Wait for existing refresh to complete
+            while (get().refreshingToken) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            return;
+        }
 
-        set({ CheckingAuth: true });
+        set({ refreshingToken: true, CheckingAuth: true });
+
         try {
-            const response = await axiosInstance.post("/auth/refresh-token");
-            set({ CheckingAuth: false });
+            const response = await axiosInstance.post("/auth/refresh-token", {}, {
+                // Don't retry refresh token calls
+                _retry: true
+            });
             return response.data;
         } catch (error) {
-            set({ user: null, CheckingAuth: false });
+            // If refresh token is invalid/expired, logout
+            if (error.response?.status === 401) {
+                set({ user: null, profile: null });
+            }
             throw error;
+        } finally {
+            set({ refreshingToken: false, CheckingAuth: false });
         }
     },
 
 }));
 
-let refreshPromise = null;
+const store = useStore;
+setupAxiosInterceptors(store);
 
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  async (error) =>{
-    const originalRequest = error.config;
-    if(error.response?.status === 401 && !originalRequest._retry){
-      originalRequest._retry = true;
-
-      try{
-        //if refresh is already in progress, wait for it
-        if(refreshPromise){
-          await refreshPromise;
-          return axiosInstance(originalRequest);
-        }
-
-        //start a new refresh token
-        refreshPromise = useStore.getState().refreshToken();
-        await refreshPromise;
-
-        refreshPromise = null;
-
-        return axiosInstance(originalRequest)
-        
-      }
-      catch(error){
-        //if refresh fails to redirect to Login or handle as needed
-        useStore.getState().logout();
-       
-      }
-    }
-    return Promise.reject(error);
-  }
-)
