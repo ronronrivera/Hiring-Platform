@@ -70,7 +70,6 @@ export const jobStore = create((set, get) => ({
                 currentJob: res.data.job,
                 applications: res.data.applications,
             });
-            console.log(res.data);
         } catch {
             toast.error("Failed to load job details");
         } finally {
@@ -115,7 +114,6 @@ export const jobStore = create((set, get) => ({
             set({
                 currentApplicantJobs: res.data,
             });
-            console.log(res);
         } catch {
             toast.error("Failed to load job details");
         } finally {

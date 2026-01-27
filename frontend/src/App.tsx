@@ -11,6 +11,7 @@ import PostJobPage from "./pages/employee pages/PostJobPage";
 import JobsPage from "./pages/employee pages/EmployeeJobs";
 import EmployeeJobDetailsPage from "./pages/employee pages/EmployeeJobDetails";
 import JobDetails from "./pages/applicant pages/JobDetails";
+import SendApplicationPage from "./pages/applicant pages/SendApplicationPage";
 const App = () => {
     const { user, profile, checkAuth, CheckingAuth } = useStore();
 
@@ -37,6 +38,9 @@ const App = () => {
                 <Route path="/ejob/:id" element={user && profile && profile.role === "employee"? <EmployeeJobDetailsPage/> : <Navigate to={"/home"}/>}/>
                 
                 <Route path="/ajob/:id" element={user && profile && profile.role === "applicant"? <JobDetails/> : <Navigate to={"/home"}/> }/>
+                
+                {/*Applications*/}
+                <Route path="/ajob/:id/apply" element={user && profile && profile.role === "applicant"? <SendApplicationPage/> : <Navigate to={"/home"}/>}/>
 
             </Routes>
         </ThemeProvider>

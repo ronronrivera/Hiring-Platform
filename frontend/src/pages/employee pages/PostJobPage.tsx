@@ -125,7 +125,7 @@ export default function PostJobPage() {
                                 onPostAnother={handlePostAnother}
                             />
                         ) : (
-                                // 📝 FORM STATE
+                                //  FORM STATE
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     {/* TITLE */}
                                     <div>

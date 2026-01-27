@@ -40,7 +40,7 @@ const JobDetails = () => {
     }
 
     const handleApply = () => {
-        toast.success("Applied to this job successfully!");
+        navigate(`/ajob/${id}/apply`);
     };
 
     const handleReport = () => {
@@ -54,7 +54,7 @@ const JobDetails = () => {
             <div className="max-w-4xl mx-auto px-4 pt-8 pb-20">
                 {/* Back */}
                 <button
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate("/home")}
                     className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition mb-6"
                 >
                     <ArrowLeftIcon className="w-5 h-5" />
@@ -125,6 +125,7 @@ const JobDetails = () => {
                             <span className="font-semibold w-36">
                                 Posted by
                             </span>
+                            <img src={job.employee?.profile.avatar?.url} className="size-6 rounded-full"/>
                             <span>
                                 {job.employee?.profile?.name || "Unknown"}
                             </span>
