@@ -12,14 +12,19 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { JobDetailsSkeleton } from "./jobDetailsSkeleton";
+import { applicationStore } from "@/store/useApplicationStore";
 
 const JobDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { currentApplicantJobs, fetchJobById, isLoading } = jobStore();
-
+    const {hasApplied, checkExistingApplication} = applicationStore()
+    
     useEffect(() => {
-        if (id) fetchJobById(id);
+        if (id){ 
+            fetchJobById(id)
+            checkExistingApplication(id);
+        }
     }, [id]);
 
     const job = currentApplicantJobs;
@@ -63,13 +68,19 @@ const JobDetails = () => {
 
                 {/* Actions */}
                 <div className="flex justify-center gap-3 mb-10">
+                    
+
                     <button
                         onClick={handleApply}
-                        className="px-5 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition flex items-center gap-2"
+                        disabled={hasApplied}
+                        className={`
+                            px-5 py-2 rounded-lg transition flex items-center gap-2
+                            ${hasApplied? "bg-gray-700 cursor-not-allowed text-black": "bg-green-500 hover:bg-green-600 text-white"}`}
                     >
                         <BriefcaseIcon className="w-4 h-4" />
-                        Apply
+                        {hasApplied ? "Applied" : "Apply"}
                     </button>
+
 
                     <button
                         onClick={handleReport}

@@ -171,7 +171,6 @@ export const sendMessageToApplication = async (req, res) => {
 
 export const checkExistingApplication = async (req, res) => {
     try {
-
         const {jobId} = req.params;
         const userId = req.user._id;
 

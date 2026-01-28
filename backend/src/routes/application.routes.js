@@ -18,7 +18,7 @@ router.get("/applications", protectRoute, checkProfileSetup, allApplications);
 router.get("/application/:id", protectRoute, checkProfileSetup, readApplication);
 
 
-router.get("/check/:id", protectRoute, checkProfileSetup, checkExistingApplication)
+router.get("/check/:jobId", protectRoute, checkProfileSetup, checkExistingApplication)
 
 
 export default router;
