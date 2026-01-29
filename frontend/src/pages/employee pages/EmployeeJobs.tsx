@@ -43,7 +43,7 @@ export default function JobsPage() {
                     <NoJobs />
                 ) : (
                     <div className="space-y-6">
-                        {employeeJobs.map((job) => {
+                        {employeeJobs.map((job: any) => {
                             const createdAt = job.createdAt
                                 ? format(new Date(job.createdAt), "PPP")
                                 : "Unknown";
@@ -74,7 +74,7 @@ export default function JobsPage() {
                                     <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
                                         <span className="flex items-center gap-1 text-gray-600 dark:text-gray-300">
                                             <Users className="w-4 h-4" />
-                                            {job.applicationsCount || 0} Applications
+                                            {job.applicantCount || 0} Applications
                                         </span>
 
                                         <span

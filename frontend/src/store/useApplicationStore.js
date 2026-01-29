@@ -33,7 +33,6 @@ export const applicationStore = create((set, get) => ({
 
         try {
             const res = await axiosInstance.get(`/jobs/check/${jobId}`);
-            console.log(res);
             set({hasApplied: res.data.applied});
 
         } catch (error) {
