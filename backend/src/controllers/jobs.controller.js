@@ -127,7 +127,7 @@ export const getEmployeeJobById = async (req, res) => {
 
         // Fetch applications for this job with applicant info
         const applications = await Application.find({ jobId: jobId })
-            .populate("applicantId", "name email") 
+            .populate("applicantId", "profile email") 
             .select("_id subject message contact applicantId");
 
         res.status(200).json({ job, applications });

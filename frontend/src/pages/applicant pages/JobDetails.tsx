@@ -104,7 +104,7 @@ const JobDetails = () => {
                             <span>Posted {formatDate(job.createdAt)}</span>
                         </div>
 
-                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
                             {job.description}
                         </p>
                     </div>
