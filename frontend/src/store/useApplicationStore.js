@@ -10,6 +10,7 @@ export const applicationStore = create((set, get) => ({
     isLoading: false,
     hasApplied: false,
     submitting: false,
+    checkingStatus: false,
 
     sendApplication: async (subject, message, jobId) => {
         set({isLoading: true})
@@ -59,16 +60,17 @@ export const applicationStore = create((set, get) => ({
     },
 
     readApplication: async (applicationId) =>{
-        set({isLoading: true});
+        set({isLoading: true, checkingStatus: true});
         try{
             const res = await axiosInstance.get(`/jobs/application/${applicationId}`);
             set({currentApplication: res.data});
+            console.log(res.data);
         }
         catch(error){
             toast.error("Failed to read application");
         }
         finally{
-            set({isLoading: false});
+            set({isLoading: false, checkingStatus: false});
         }
     },
     

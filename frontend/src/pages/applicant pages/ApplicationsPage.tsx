@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import { applicationStore } from "@/store/useApplicationStore";
 import { Navbar } from "@/components/navbar";
 import { format } from "date-fns";
-import { Briefcase, Calendar, Users, ArrowRight } from "lucide-react";
+import { Briefcase, Calendar, ArrowRight } from "lucide-react";
 
 export default function ApplicationsPage() {
     const { applicantApplications, getApplications, isLoading } = applicationStore();
@@ -19,7 +19,13 @@ export default function ApplicationsPage() {
         VIEWED: "bg-yellow-400 text-black dark:bg-yellow-500 dark:text-black",
         REJECTED: "bg-red-500 text-white",
         SHORTLISTED: "bg-green-600 text-white",
+        WITHDRAWN: "bg-gray-600 text-white"
     };
+
+    // Sort applications: newest first
+    const sortedApplications = [...applicantApplications].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
 
     return (
         <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
@@ -45,13 +51,13 @@ export default function ApplicationsPage() {
                             </div>
                         ))}
                     </div>
-                ) : applicantApplications.length === 0 ? (
+                ) : sortedApplications.length === 0 ? (
                     <p className="text-center text-gray-500 dark:text-gray-400 mt-10">
                         You have not applied to any jobs yet.
                     </p>
                 ) : (
                     <div className="space-y-6">
-                        {applicantApplications.map((app: any) => {
+                        {sortedApplications.map((app: any) => {
                             const createdAt = app.createdAt
                                 ? format(new Date(app.createdAt), "PPP")
                                 : "Unknown";

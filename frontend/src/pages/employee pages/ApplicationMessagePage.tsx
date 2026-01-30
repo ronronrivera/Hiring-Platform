@@ -14,20 +14,20 @@ const ApplicationMessagePage = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [status, setStatus] = useState("SHORTLISTED");
-    const [message, setMessage] = useState(""); 
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
-        if (id){ 
-            readApplication(id)
+        if (id) {
+            readApplication(id);
         }
     }, [id, readApplication]);
-
 
     const handleStatusUpdate = async () => {
         await updateApplicationStatus(
             currentApplication._id,
             status,
-            message        );
+            message
+        );
 
         setIsModalOpen(false);
         setStatus("");
@@ -46,10 +46,9 @@ const ApplicationMessagePage = () => {
 
     return (
         <div className="bg-white dark:bg-black min-h-screen">
-            <Navbar/>
+            <Navbar />
 
             <div className="p-6 max-w-3xl mx-auto">
-
                 {/* Back Button */}
                 <div
                     className="flex items-center gap-2 cursor-pointer mt-10 mb-10"
@@ -62,7 +61,7 @@ const ApplicationMessagePage = () => {
                 </div>
 
                 {isLoading ? (
-                    <ApplicationMessageSkeleton/>
+                    <ApplicationMessageSkeleton />
                 ) : currentApplication ? (
                     <>
                         {/* Applicant Info + Status Button */}
@@ -76,9 +75,16 @@ const ApplicationMessagePage = () => {
                                     alt={currentApplication.applicantId?.profile?.name || "Applicant Avatar"}
                                     className="w-10 h-10 rounded-full mr-3 border border-gray-300 dark:border-gray-600"
                                 />
-                                <span className="text-lg font-medium text-gray-800 dark:text-gray-200 hover:underline">
-                                    {currentApplication.applicantId?.profile?.name || "Unknown Applicant"}
-                                </span>
+                                <div className="flex flex-col">
+                                    <span className="text-lg font-medium text-gray-800 dark:text-gray-200 hover:underline">
+                                        {currentApplication.applicantId?.profile?.name || "Unknown Applicant"}
+                                    </span>
+                                    {currentApplication.status === "WITHDRAWN" && (
+                                        <span className="text-sm text-red-600 dark:text-red-400 font-medium">
+                                            Withdrawn
+                                        </span>
+                                    )}
+                                </div>
                             </div>
 
                             {(currentApplication.status === "PENDING" || currentApplication.status === "VIEWED") && (
@@ -86,7 +92,7 @@ const ApplicationMessagePage = () => {
                                     onClick={() => setIsModalOpen(true)}
                                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
                                 >
-                                        Respond
+                                    Respond
                                 </button>
                             )}
                         </div>
@@ -163,31 +169,30 @@ const ApplicationMessagePage = () => {
                                                     >
                                                         Cancel
                                                     </button>
-                                                        <button
-                                                            type="button"
-                                                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-                                                            onClick={() => {
-                                                                if (status === "SHORTLISTED" && !message.trim()) {
-                                                                    toast.error("Message is required when shortlisting");
-                                                                    return;
-                                                                }
-                                                                handleStatusUpdate();
-                                                            }}
-                                                        >
-                                                            {submitting ? <Loader2Icon className="animate-spin size-4"/> : "Submit"}
-                                                        </button>
-
-                                                    </div>
-                                                </Dialog.Panel>
-                                            </Transition.Child>
-                                        </div>
+                                                    <button
+                                                        type="button"
+                                                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                                                        onClick={() => {
+                                                            if (status === "SHORTLISTED" && !message.trim()) {
+                                                                toast.error("Message is required when shortlisting");
+                                                                return;
+                                                            }
+                                                            handleStatusUpdate();
+                                                        }}
+                                                    >
+                                                        {submitting ? <Loader2Icon className="animate-spin size-4" /> : "Submit"}
+                                                    </button>
+                                                </div>
+                                            </Dialog.Panel>
+                                        </Transition.Child>
                                     </div>
-                                </Dialog>
-                            </Transition>
-                        </>
-                    ) : (
-                            <p>No application found.</p>
-                        )}
+                                </div>
+                            </Dialog>
+                        </Transition>
+                    </>
+                ) : (
+                    <p>No application found.</p>
+                )}
             </div>
         </div>
     );

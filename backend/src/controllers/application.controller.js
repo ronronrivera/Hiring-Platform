@@ -105,7 +105,6 @@ export const allApplications = async (req, res) => {
     }
 }
 
-
 export const sendMessageToApplication = async (req, res) => {
   try {
     const user = req.user;
@@ -122,16 +121,30 @@ export const sendMessageToApplication = async (req, res) => {
     const isEmployee =
       application.jobId.employee.toString() === user._id.toString();
 
-    if (!isEmployee) {
+    const isApplicant =
+      application.applicantId.toString() === user._id.toString();
+
+    // Only allow employees or applicants to update the application
+    if (!isEmployee && !isApplicant) {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
-    const allowedStatus = ["REJECTED", "SHORTLISTED"];
-    if (!allowedStatus.includes(status)) {
-      return res.status(400).json({ message: "Invalid status" });
+    // Define allowed statuses per role
+    let allowedStatus = [];
+    if (isEmployee) {
+      // Employees cannot set "WITHDRAWN"
+      allowedStatus = ["REJECTED", "SHORTLISTED"];
+    } else if (isApplicant) {
+      // Applicants can set "WITHDRAWN"
+      allowedStatus = ["WITHDRAWN"];
     }
 
-    if (status === "SHORTLISTED" && !message) {
+    if (!allowedStatus.includes(status)) {
+      return res.status(400).json({ message: "Invalid status for your role" });
+    }
+
+    // Only require message if employee is shortlisting
+    if (status === "SHORTLISTED" && isEmployee && !message) {
       return res.status(400).json({
         message: "Message required when shortlisting",
       });
