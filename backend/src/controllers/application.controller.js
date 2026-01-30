@@ -50,9 +50,8 @@ export const readApplication = async (req, res) => {
         const user = req.user;
 
         const application = await Application.findById(applicationId)
-            .populate("applicantId", "name email")
+            .populate("applicantId", "profile email")
             .populate("jobId", "title employee")
-            .populate("messages.sender", "name email");
 
         if (!application) {
             return res.status(404).json({ message: "Application not found" });
@@ -106,11 +105,12 @@ export const allApplications = async (req, res) => {
     }
 }
 
+
 export const sendMessageToApplication = async (req, res) => {
   try {
     const user = req.user;
     const { id: applicationId } = req.params;
-    const { message, status } = req.body;
+    const { status, message } = req.body;
 
     const application = await Application.findById(applicationId)
       .populate("jobId");
@@ -122,49 +122,33 @@ export const sendMessageToApplication = async (req, res) => {
     const isEmployee =
       application.jobId.employee.toString() === user._id.toString();
 
-    const isApplicant =
-      application.applicantId.toString() === user._id.toString();
-
-    if (!isEmployee && !isApplicant) {
+    if (!isEmployee) {
       return res.status(403).json({ message: "Unauthorized" });
     }
 
-    //  Applicants cannot change status
-    if (status && !isEmployee) {
-      return res.status(403).json({
-        message: "Only employer can update application status",
+    const allowedStatus = ["REJECTED", "SHORTLISTED"];
+    if (!allowedStatus.includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
+    if (status === "SHORTLISTED" && !message) {
+      return res.status(400).json({
+        message: "Message required when shortlisting",
       });
     }
 
-    // Employer status rules
-    if (isEmployee && status) {
-      const allowedStatus = ["REJECTED", "SHORTLISTED"];
-      if (!allowedStatus.includes(status)) {
-        return res.status(400).json({ message: "Invalid status" });
-      }
-
-      if (status === "SHORTLISTED" && !message) {
-        return res.status(400).json({
-          message: "Message required when shortlisting",
-        });
-      }
-
-      application.status = status;
-    }
-
-    // Push message (both sides)
-    if (message) {
-      application.messages.push({
-        sender: user._id,
-        content: message,
-      });
-    }
+    application.status = status;
+    application.statusMessage = message || null;
+    application.statusUpdatedAt = new Date();
 
     await application.save();
 
-    res.json({ message: "Message sent successfully" });
+    res.json({
+      status: application.status,
+      statusMessage: application.statusMessage,
+    });
   } catch (error) {
-    console.error("sendMessageToApplication error:", error);
+    console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

@@ -136,7 +136,7 @@ const JobDetails = () => {
                             <span className="font-semibold w-36">
                                 Posted by
                             </span>
-                            <img src={job.employee?.profile.avatar?.url} className="size-6 rounded-full"/>
+                            <img src={job.employee?.profile.avatar?.url || "/avatar.png"} className="size-6 rounded-full"/>
                             <span>
                                 {job.employee?.profile?.name || "Unknown"}
                             </span>

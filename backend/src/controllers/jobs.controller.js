@@ -118,7 +118,7 @@ export const getAllEmployeeJobs = async (req, res) => {
 
 export const getEmployeeJobById = async (req, res) => {
     try {
-        const jobId = req.params.id;
+        const {id: jobId} = req.params;
         const userId = req.user._id;
 
         // Only the employee who owns the job can see this

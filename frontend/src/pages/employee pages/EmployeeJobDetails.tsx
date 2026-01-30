@@ -17,7 +17,7 @@ const EmployeeJobDetailsPage = () => {
     const navigate = useNavigate();
 
     const {
-        currentJob,
+        currentJobs,
         applications,
         fetchEmployeeJobById,
         updateJobState,
@@ -28,13 +28,12 @@ const EmployeeJobDetailsPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalType, setModalType] = useState("delete");
     const [selectedStatus, setSelectedStatus] = useState("draft");
-    const [openAppId, setOpenAppId] = useState(null);
 
     useEffect(() => {
         if (id) fetchEmployeeJobById(id);
     }, [id]);
 
-    if (!currentJob) return <JobDetailsSkeleton />;
+    if (!currentJobs) return <JobDetailsSkeleton />;
 
     return (
         <div className="bg-white dark:bg-black min-h-screen">
@@ -58,7 +57,7 @@ const EmployeeJobDetailsPage = () => {
                         {/* Left */}
                         <div className="min-w-0">
                             <h1 className="text-2xl font-bold text-gray-900 dark:text-white line-clamp-2">
-                                {currentJob.title}
+                                {currentJobs.title}
                             </h1>
 
                             <p className="text-sm mt-2 flex items-center gap-2">
@@ -68,13 +67,13 @@ const EmployeeJobDetailsPage = () => {
                                 ) : (
                                     <span
                                         className={`px-2 py-1 rounded-md text-white text-xs font-medium ${
-                                            currentJob.status === "published"
+                                            currentJobs.status === "published"
                                                 ? "bg-green-600"
                                                 : "bg-amber-500"
                                         }`}
                                     >
-                                        {currentJob.status[0].toUpperCase() +
-                                            currentJob.status.slice(1)}
+                                        {currentJobs.status[0].toUpperCase() +
+                                            currentJobs.status.slice(1)}
                                     </span>
                                 )}
                             </p>
@@ -85,7 +84,7 @@ const EmployeeJobDetailsPage = () => {
                             <button
                                 onClick={() => {
                                     setModalType("status");
-                                    setSelectedStatus(currentJob.status);
+                                    setSelectedStatus(currentJobs.status);
                                     setIsModalOpen(true);
                                 }}
                                 className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
@@ -109,28 +108,28 @@ const EmployeeJobDetailsPage = () => {
                     <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-300">
                         <div className="flex items-center gap-1">
                             <CalendarDaysIcon className="w-4 h-4" />
-                            {new Date(currentJob.createdAt).toLocaleDateString()}
+                            {new Date(currentJobs.createdAt).toLocaleDateString()}
                         </div>
 
                         <div className="flex items-center gap-1">
                             <BriefcaseIcon className="w-4 h-4" />
-                            {currentJob.employmentType.replace("_", " ")}
+                            {currentJobs.employmentType.replace("_", " ")}
                         </div>
 
-                        {currentJob.salaryRange && (
+                        {currentJobs.salaryRange && (
                             <div className="flex items-center gap-1">
                                 <DollarSign className="w-4 h-4" />
-                                {currentJob.salaryRange}
+                                {currentJobs.salaryRange}
                             </div>
                         )}
                     </div>
 
                     <p className="text-gray-700 dark:text-gray-200 whitespace-pre-line">
-                        {currentJob.description}
+                        {currentJobs.description}
                     </p>
 
                     <div className="flex flex-wrap gap-2">
-                        {currentJob.skills.map((skill: any) => (
+                        {currentJobs.skills.map((skill: any) => (
                             <span
                                 key={skill}
                                 className="px-3 py-1 rounded-full text-sm bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100"
@@ -152,8 +151,6 @@ const EmployeeJobDetailsPage = () => {
                     ) : (
                         <div className="space-y-3">
                             {applications.map((app:any) => {
-                                const isOpen = openAppId === app._id;
-
                                 return (
                                     <div
                                         key={app._id}
@@ -161,18 +158,14 @@ const EmployeeJobDetailsPage = () => {
                                     >
                                         {/* Header */}
                                         <button
-                                            onClick={() =>
-                                                setOpenAppId(
-                                                    isOpen ? null : app._id
-                                                )
-                                            }
                                             className="w-full p-4 flex justify-between items-center text-left"
+                                            onClick={() => navigate(`/e-application/${app._id}`)}
                                         >
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-3 hover:cursor-pointer">
                                                 <img src={app.applicantId?.profile?.avatar?.url || "/avatar.png"}
                                                      className="w-8 h-8 rounded-full object-cover border border-gray-300 dark:border-gray-600"
                                                 />
-                                                <h1 className="font-medium text-gray-900 dark:text-white">
+                                                <h1 className="font-medium text-gray-900 dark:text-white hover:underline hover:cursor-pointer">
                                                     {app.applicantId?.profile?.name}
                                                 </h1>
                                             </div>

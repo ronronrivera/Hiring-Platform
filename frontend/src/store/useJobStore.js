@@ -5,7 +5,7 @@ import { axiosInstance } from "@/lib/axios";
 export const jobStore = create((set, get) => ({
 
     employeeJobs: [],
-    currentJobs: [],
+    currentJobs: null,
     applications: [],
 
     currentApplicantJobs: [],
@@ -67,10 +67,9 @@ export const jobStore = create((set, get) => ({
         try {
             const res = await axiosInstance.get(`/jobs/get-my-job/${jobId}`);
             set({
-                currentJob: res.data.job,
+                currentJobs: res.data.job,
                 applications: res.data.applications,
             });
-            console.log(res.data);
         } catch {
             toast.error("Failed to load job details");
         } finally {
