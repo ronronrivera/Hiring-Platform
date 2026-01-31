@@ -9,9 +9,11 @@ import { UsersRoundIcon,
         FileTextIcon, 
         LayoutDashboardIcon,
         SettingsIcon,
-        BellIcon} from "lucide-react";
+        BellIcon,
+        MessageCircleIcon,
+        } from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "./ui/button";
@@ -126,6 +128,11 @@ export function Navbar() {
                                     </Link>
                                 </DropdownMenuItem>
                             )}
+                           <DropdownMenuItem asChild>
+                                <Link to="/messages">
+                                    <MessageCircleIcon className="mr-2 h-4 w-4" /> Messages
+                                </Link>
+                            </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                                 <Link to="/notifications">
                                     <BellIcon className="mr-2 h-4 w-4" /> Notifications

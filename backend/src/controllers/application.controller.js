@@ -49,9 +49,16 @@ export const readApplication = async (req, res) => {
         const applicationId = req.params.id;
         const user = req.user;
 
+
         const application = await Application.findById(applicationId)
-            .populate("applicantId", "profile email")
-            .populate("jobId", "title employee")
+            .populate("applicantId", "email")
+            .populate({
+                path: "jobId",
+                select: "title employee",
+                populate: {
+                    path: "employee",
+                    select: "profile email avatar"                 }
+            });
 
         if (!application) {
             return res.status(404).json({ message: "Application not found" });

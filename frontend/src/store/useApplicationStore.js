@@ -64,7 +64,6 @@ export const applicationStore = create((set, get) => ({
         try{
             const res = await axiosInstance.get(`/jobs/application/${applicationId}`);
             set({currentApplication: res.data});
-            console.log(res.data);
         }
         catch(error){
             toast.error("Failed to read application");
