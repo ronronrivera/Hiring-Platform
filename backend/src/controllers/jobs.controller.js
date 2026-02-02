@@ -118,9 +118,9 @@ export const getAllEmployeeJobs = async (req, res) => {
 
 export const getEmployeeJobById = async (req, res) => {
     try {
-        const {id: jobId} = req.params;
+        const {jobId} = req.params;
         const userId = req.user._id;
-
+        
         // Only the employee who owns the job can see this
         const job = await Job.findOne({ _id: jobId, employee: userId});
         if (!job) return res.status(404).json({ message: "Job not found" });

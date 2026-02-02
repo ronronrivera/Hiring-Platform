@@ -4,7 +4,10 @@ import { allApplications,
         checkExistingApplication,
         readApplication, 
         sendApplication, 
-        sendMessageToApplication} from "../controllers/application.controller.js";
+        sendMessageToApplication,
+        streamChat,
+        debugApplications
+        } from "../controllers/application.controller.js";
 
 import protectRoute from "../middleware/protectRoute.js";
 import checkProfileSetup from "../middleware/checkProfileSetup.js";
@@ -17,8 +20,9 @@ router.post("/:id/send-message", protectRoute, checkProfileSetup, sendMessageToA
 router.get("/applications", protectRoute, checkProfileSetup, allApplications);
 router.get("/application/:id", protectRoute, checkProfileSetup, readApplication);
 
-
+router.get("/debug-applications", debugApplications);
 router.get("/check/:jobId", protectRoute, checkProfileSetup, checkExistingApplication)
 
+router.get("/applications/:id/chat", protectRoute, checkProfileSetup, streamChat);
 
 export default router;

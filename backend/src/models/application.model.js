@@ -41,7 +41,11 @@ const applicationSchema = new mongoose.Schema(
         statusMessage:{
             type: String,
             default: null
-        }
+        },
+
+        chatChannelId:{
+            type: String,
+        },
 
     },
     {

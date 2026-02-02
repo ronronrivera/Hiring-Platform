@@ -46,7 +46,7 @@ const MyApplicationPage = () => {
     const handleOpenConversation = () => {
         if (!currentApplication?.jobId?.employee) return;
         setIsMessageModalOpen(false);
-        navigate(`/message/${currentApplication.jobId.employee._id}`);
+        navigate(`/message/${currentApplication._id}`);
     };
 
     return (

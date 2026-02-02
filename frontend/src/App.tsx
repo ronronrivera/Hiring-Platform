@@ -15,6 +15,7 @@ import SendApplicationPage from "./pages/applicant pages/SendApplicationPage";
 import ApplicationMessagePage from "./pages/employee pages/ApplicationMessagePage";
 import ApplicationsPage from "./pages/applicant pages/ApplicationsPage";
 import ApplicantApplications from "./pages/applicant pages/ApplicantApplications";
+import ChatPage from "./pages/ChatPage";
 const App = () => {
     const { user, profile, checkAuth, CheckingAuth } = useStore();
 
@@ -50,6 +51,10 @@ const App = () => {
                 <Route path="/e-application/:id" element={user && profile && profile.role === "employee"? <ApplicationMessagePage/> : <Navigate to={"/home"}/>}/>
                  <Route path="/a-application/:id" element={user && profile && profile.role === "applicant"? <ApplicantApplications/> : <Navigate to={"/home"}/>}/>
                 <Route path="/applications" element={user && profile && profile.role === "applicant"? <ApplicationsPage/> : <Navigate to={"/home"}/> }/>
+
+                {/*Chat Page*/}
+                <Route path="/message/:applicationId" element={user && profile? <ChatPage/> : <Navigate to={"/"}/>}/>
+
             </Routes>
         </ThemeProvider>
     );

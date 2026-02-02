@@ -16,7 +16,7 @@ const router = express.Router();
 router.post("/post-job", protectRoute, checkProfileSetup,postJob)
 
 router.get("/get-my-jobs", protectRoute, checkProfileSetup ,getAllEmployeeJobs);
-router.get("/get-my-job/:id", protectRoute, checkProfileSetup ,getEmployeeJobById);
+router.get("/get-my-job/:jobId", protectRoute, checkProfileSetup ,getEmployeeJobById);
 
 router.get("/get-jobs", protectRoute, checkProfileSetup ,getAllJobs);
 router.get("/get-job/:id", protectRoute, checkProfileSetup ,getJobById);
