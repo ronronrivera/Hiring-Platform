@@ -39,7 +39,7 @@ export default function ChatPage() {
       try {
         await connectToChat(applicationId!, { _id: user._id, name: user.name });
       } catch (error: any) {
-        toast.error(error.response.data.message);
+        toast.error(error.response?.data?.message || "Failed to open Chat Page");
       } finally {
         setLoading(false);
       }

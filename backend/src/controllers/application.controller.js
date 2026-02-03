@@ -265,6 +265,7 @@ export const streamChat = async (req, res) =>{
         const token = streamServer.createToken(userId.toString());
 
         res.json({
+            apiKey: ENV.STREAM_API_KEY,
             token,
             channelId: application.chatChannelId,
         });
